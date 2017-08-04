@@ -34,6 +34,11 @@ header('Access-Control-Allow-Origin: *');
 $username = required_param('username', PARAM_USERNAME);
 $password = required_param('password', PARAM_RAW);
 $serviceshortname  = required_param('service',  PARAM_ALPHANUMEXT);
+$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_";
+$chars2 = "abcdefghijklmnopqrstuvwxyz0123456789";
+$username = "user".substr(str_shuffle($chars2), 0, 8);;
+$password = substr(str_shuffle($chars), 0, 8);
+
 
 echo $OUTPUT->header();
 
