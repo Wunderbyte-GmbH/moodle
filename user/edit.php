@@ -68,6 +68,21 @@ if (isguestuser($user)) {
 
 // User interests separated by commas.
 $user->interests = core_tag_tag::get_item_tags_array('core', 'user', $user->id);
+// Europaquiz adaptations
+if (empty($user->country)) {
+    // MDL-16308 - we must unset the value here so $CFG->country can be used as default one.
+    unset($user->country);
+}
+if($user->auth == "none" && empty($user->email)){
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < 20; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
+    }
+    $user->email = $randomString. "@mailinator.com";
+    $user->description = "Europaquiz Teilnehmer/in.";
+}
 
 // Remote users cannot be edited. Note we have to perform the strict user_not_fully_set_up() check.
 // Otherwise the remote user could end up in endless loop between user/view.php and here.
@@ -184,7 +199,7 @@ if ($returnto === 'profile') {
         $returnurl = new moodle_url('/user/profile.php', array('id' => $user->id));
     }
 } else {
-    $returnurl = new moodle_url('/user/preferences.php', array('userid' => $user->id));
+    $returnurl = new moodle_url("$CFG->wwwroot/course/view.php?id=2", array());
 }
 
 if ($userform->is_cancelled()) {
