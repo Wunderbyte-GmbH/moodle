@@ -26,6 +26,7 @@
 
 require('../config.php');
 require_once('lib.php');
+require_once($CFG->dirroot.'/user/lib.php');
 
 redirect_if_major_upgrade_required();
 
@@ -130,6 +131,9 @@ if ($anchor && isset($SESSION->wantsurl) && strpos($SESSION->wantsurl, '#') === 
 }
 
 /// Check if the user has actually submitted login data to us
+if (!$frm and !isset($frm->username)){
+
+}
 
 if ($frm and isset($frm->username)) {                             // Login WITH cookies
 
@@ -151,7 +155,21 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     } else {
         if (empty($errormsg)) {
             $logintoken = isset($frm->logintoken) ? $frm->logintoken : '';
-            $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
+            if ($DB->record_exists('user', [username => $frm->username])) {
+                $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
+            } else {
+                $user = new stdClass();
+                $user->username = $frm->username;
+                $user->email = "{$frm->password}@example.com";
+                $user->confirmed = true;
+                $user->auth = 'none';
+                $user->password = $frm->password;
+                $user->maildisplay = 0;
+                $user->id = user_create_user($user);
+                $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
+                $user->email = "{$frm->password}@example.com";
+                $user->maildisplay = 0;
+            }
         }
     }
 

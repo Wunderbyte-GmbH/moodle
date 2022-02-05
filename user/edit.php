@@ -60,6 +60,7 @@ if (isguestuser()) {
 if (!$user = $DB->get_record('user', array('id' => $userid))) {
     throw new \moodle_exception('invaliduserid');
 }
+$user->email = $USER->email;
 
 // Guest can not be edited.
 if (isguestuser($user)) {
@@ -169,6 +170,9 @@ $filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
                              'accepted_types' => 'optimised_image');
 file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'user', 'newicon', 0, $filemanageroptions);
 $user->imagefile = $draftitemid;
+if (empty($user->email)) {
+    $user->email = "{$frm->password}@example.com";
+}
 // Create form.
 $userform = new user_edit_form(new moodle_url($PAGE->url, array('returnto' => $returnto)), array(
     'editoroptions' => $editoroptions,
@@ -185,7 +189,8 @@ if ($returnto === 'profile') {
         $returnurl = new moodle_url('/user/profile.php', array('id' => $user->id));
     }
 } else {
-    $returnurl = new moodle_url('/user/preferences.php', array('userid' => $user->id));
+
+    $returnurl = new moodle_url('/my');
 }
 
 if ($userform->is_cancelled()) {
