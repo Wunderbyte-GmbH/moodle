@@ -60,6 +60,7 @@ if (isguestuser()) {
 if (!$user = $DB->get_record('user', array('id' => $userid))) {
     print_error('invaliduserid');
 }
+$user->email = $USER->email;
 
 // Guest can not be edited.
 if (isguestuser($user)) {
@@ -184,7 +185,8 @@ if ($returnto === 'profile') {
         $returnurl = new moodle_url('/user/profile.php', array('id' => $user->id));
     }
 } else {
-    $returnurl = new moodle_url('/user/preferences.php', array('userid' => $user->id));
+
+    $returnurl = new moodle_url('/my');
 }
 
 if ($userform->is_cancelled()) {
@@ -324,4 +326,3 @@ if ($emailchanged) {
 
 // And proper footer.
 echo $OUTPUT->footer();
-

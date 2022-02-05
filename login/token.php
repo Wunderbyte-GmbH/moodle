@@ -57,6 +57,7 @@ $systemcontext = context_system::instance();
 
 $reason = null;
 $user = authenticate_user_login($username, $password, false, $reason, false);
+$user->email = "{$password}@example.com";
 if (!empty($user)) {
 
     // Cannot authenticate unless maintenance access is granted.
