@@ -1,0 +1,3 @@
+badpowersupply,tool_moodlebox
+ipaddress,tool_moodlebox
+raspbianversion,tool_moodlebox
