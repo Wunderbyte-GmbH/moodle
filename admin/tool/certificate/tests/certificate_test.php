@@ -23,6 +23,7 @@ use tool_tenant_generator;
 /**
  * Unit tests for the certificate class.
  *
+ * @covers     \tool_certificate\certificate
  * @package    tool_certificate
  * @group      tool_certificate
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
@@ -450,5 +451,86 @@ class certificate_test extends advanced_testcase {
         $fs = get_file_storage();
         $files = $fs->get_area_files(\context_system::instance()->id, 'tool_certificate', 'element', false, '', false);
         $this->assertCount(3, $files);
+    }
+
+    /**
+     * Test get_extra_user_fields for sql to get the values of the extra columns in certificate issues table.
+     */
+    public function test_get_extra_user_fields(): void {
+        global $CFG;
+        $this->setAdminUser();
+        $context = \context_system::instance();
+
+        // Check method without extra fields.
+        $allfields = 'u.id,u.picture,u.firstname,u.lastname,u.firstnamephonetic,u.lastnamephonetic,u.middlename,'
+                . 'u.alternatename,u.imagealt,u.email';
+        $extrauserfields = certificate::get_extra_user_fields($context);
+        $this->assertEquals($allfields, $extrauserfields);
+
+        // Add extra fields.
+        $CFG->showuseridentity = 'email,country,city';
+        // Check method with extra fields (email is already included in the default ones).
+        $allfields .= ',u.country,u.city';
+        $extrauserfields = certificate::get_extra_user_fields($context);
+        $this->assertEquals($allfields, $extrauserfields);
+    }
+
+    /**
+     * Test get_user_extra_field_names for extra columns in certificate issues table.
+     */
+    public function test_get_user_extra_field_names(): void {
+        global $CFG;
+        $this->setAdminUser();
+        $context = \context_system::instance();
+
+        // Check method without extra fields.
+        $CFG->showuseridentity = '';
+        $userextrafieldnames = certificate::get_user_extra_field_names($context);
+        $this->assertEmpty($userextrafieldnames);
+
+        // Check method with extra fields.
+        $fields = ['email', 'phone1', 'department', 'city', 'country'];
+        $CFG->showuseridentity = implode(',', $fields);
+        $userextrafieldnames = certificate::get_user_extra_field_names($context);
+        $this->assertEqualsCanonicalizing($fields, array_keys($userextrafieldnames));
+    }
+
+    /**
+     * Data provider for {@see test_calculate_expirydate}
+     *
+     * @return array
+     */
+    public function calculate_expirydate_provider(): array {
+        return [
+            'Expires never' => [
+                certificate::DATE_EXPIRATION_NEVER, null, null, null
+            ],
+            'Expires on 10 September 2022' => [
+                certificate::DATE_EXPIRATION_ABSOLUTE, '10 September 2022', null, '10 September 2022'
+            ],
+            'Expires after 2 weeks from now' => [
+                certificate::DATE_EXPIRATION_AFTER, null, 2 * WEEKSECS, '+2 week'
+            ],
+            'Expires after 5 days from now' => [
+                certificate::DATE_EXPIRATION_AFTER, null, 5 * DAYSECS, '+5 day'
+            ],
+        ];
+    }
+
+    /**
+     * Test for test_calculate_expirydate
+     *
+     * @param int $datetype
+     * @param string|null $absolutedatestr
+     * @param int|null $duration
+     * @param string|null $expirydatestr
+     * @dataProvider calculate_expirydate_provider
+     */
+    public function test_calculate_expirydate(int $datetype, ?string $absolutedatestr, ?int $duration,
+            ?string $expirydatestr): void {
+        $absolutedate = isset($absolutedatestr) ? strtotime($absolutedatestr) : null;
+        $expirydate = isset($expirydatestr) ? strtotime($expirydatestr) : 0;
+        $date = certificate::calculate_expirydate($datetype, $absolutedate, $duration);
+        $this->assertEquals($expirydate, $date);
     }
 }

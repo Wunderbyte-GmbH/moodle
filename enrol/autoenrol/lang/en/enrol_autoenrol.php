@@ -38,6 +38,7 @@ The following placeholders may be included in the message:
 
 * Course name {$a->coursename}
 * Link to user\'s profile page {$a->profileurl}
+* Link to course {$a->link}
 * User email {$a->email}
 * User fullname {$a->fullname}';
 $string['enrolme'] = 'Enrol me';
@@ -51,6 +52,11 @@ $string['warning'] = 'Caution!';
 $string['warning_message'] = 'Adding this plugin to your course will allow any registered Moodle users access to your course. Only install this plugin if you want to allow open access to your course for users who have logged in.';
 $string['welcomemessage'] = 'Welcome message';
 $string['welcometocourse'] = 'Welcome to {$a}';
+$string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
+
+If you have not done so already, you should edit your profile page so that we can learn more about you:
+
+  {$a->profileurl}';
 
 $string['role'] = 'Default assigned role';
 $string['role_help'] = 'Power users can use this setting to change the permission level at which users are enrolled.';
@@ -147,7 +153,7 @@ $string['expirymessageenrollerbody'] = 'Autoenrolment in the course \'{$a->cours
 {$a->users}
 
 To extend their enrolment, go to {$a->extendurl}';
-$string['expirymessageenrolledsubject'] = 'Selft enrolment expiry notification';
+$string['expirymessageenrolledsubject'] = 'Autoenrolment expiry notification';
 $string['expirymessageenrolledbody'] = 'Dear {$a->user},
 
 This is a notification that your enrolment in the course \'{$a->course}\' is due to expire on {$a->timeend}.

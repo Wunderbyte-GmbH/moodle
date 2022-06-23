@@ -1,17 +1,19 @@
 image: moodlehq/moodle-workplace-plugin-ci:7.3
 
 services:
-  - postgres:9.6
+  - postgres:10
   #- mysql:5.7.26
   - name: selenium/standalone-chrome:3
     alias: selenium-standalone-chrome
 
 variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
-  MOODLE_BRANCH_WORKPLACE: master
+  MOODLE_BRANCH_WORKPLACE311: WORKPLACE_311
+  MOODLE_BRANCH_WORKPLACE310: WORKPLACE_310
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
-  MOODLE_BRANCH_LMS: MOODLE_311_STABLE
-  MOODLE_BRANCH_LMSPREV: MOODLE_310_STABLE
+  MOODLE_BRANCH_LMS311: MOODLE_311_STABLE
+  MOODLE_BRANCH_LMS310: MOODLE_310_STABLE
+  MOODLE_BRANCH_LMS39: MOODLE_39_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -25,12 +27,12 @@ variables:
 .setupworkplace: &setupworkplace
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE311
     - . prepare-workplace $cibot_sshkey
     - cd $CI_PROJECT_DIR/..
-    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
-    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
-    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certificate.git
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git --branch WORKPLACE_311
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git --branch WORKPLACE_311
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certificate.git --branch MOODLE_39_STABLE
     - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
     - cd moodle
 
@@ -53,9 +55,9 @@ codecheck:
     - . check moodle-plugin-ci savepoints
     - . check moodle-plugin-ci mustache
     - . check moodle-plugin-ci grunt --max-lint-warnings 0
-    - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter tool_dataprivacy_metadata_registry_testcase
-    - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter core_externallib_testcase
-    - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_testcase
+    - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
+    - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_testsuite --filter test_all_external_info
+    - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_test
     - . check moodle-plugin-ci phpunit --coverage-text
     - . check-finish
   except:
@@ -74,12 +76,11 @@ behat:
     - tags
     - /^WORKPLACE_\d+$/
 
-.scriptlms: &scriptlms
+.scriptshorttest: &scriptshorttest
   script:
-    - export MOODLE_REPO=$MOODLE_REPO_LMS
     - . prepare-workplace $cibot_sshkey
     - cd $CI_PROJECT_DIR/..
-    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certificate.git
+    - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certificate.git --branch MOODLE_39_STABLE
     - moodle-plugin-ci install --db-host="$DB_HOST" --no-init -vvv
     - cd moodle
     - php admin/tool/phpunit/cli/init.php
@@ -91,19 +92,41 @@ behat:
     - . check moodle-plugin-ci behat --suite default --profile chrome
     - . check-finish
 
-lms:
+wp310:
   before_script:
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS
-  <<: *scriptlms
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE310
+  <<: *scriptshorttest
   except:
     - master
     - tags
     - /^WORKPLACE_\d+$/
 
-lmsprev:
+lms39:
   before_script:
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMSPREV
-  <<: *scriptlms
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS39
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_\d+$/
+
+lms311:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS311
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_\d+$/
+
+lms310:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS310
+  <<: *scriptshorttest
   except:
     - master
     - tags
