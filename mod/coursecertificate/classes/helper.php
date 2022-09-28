@@ -89,6 +89,7 @@ class helper {
         global $DB;
         $sql = "SELECT * FROM {tool_certificate_issues} ci
                 WHERE component = :component AND courseid = :courseid AND templateid = :templateid AND userid = :userid
+                      AND archived = 0
                 ORDER BY id DESC";
         $params = [
             'component' => 'mod_coursecertificate',
@@ -111,8 +112,15 @@ class helper {
      */
     public static function issue_certificate(\stdClass $user, \stdClass $coursecertificate,
                                              ?\stdClass $course = null, ?template $template = null): int {
+        $lockfactory = \core\lock\lock_config::get_lock_factory('mod_coursecertificate_issue');
+        $lock = $lockfactory->get_lock("i_{$user->id}_{$coursecertificate->template}_{$coursecertificate->course}", MINSECS);
+        if (!$lock) {
+            throw new \moodle_exception('locktimeout');
+        }
+
         if (self::get_user_certificate($user->id, $coursecertificate->course, $coursecertificate->template)) {
             // If user already has a certificate - do not issue a new one.
+            $lock->release();
             return 0;
         }
 
@@ -124,7 +132,7 @@ class helper {
             $coursecertificate->expirydateoffset,
             $coursecertificate->expirydateoffset
         );
-        return $template->issue_certificate($user->id, $expirydate, $issuedata, 'mod_coursecertificate', $course->id);
+        return $template->issue_certificate($user->id, $expirydate, $issuedata, 'mod_coursecertificate', $course->id, $lock);
     }
 
     /**
@@ -136,7 +144,8 @@ class helper {
      */
     private static function get_users_issued_select(int $courseid, int $templateid): array {
         $sql = "SELECT DISTINCT ci.userid FROM {tool_certificate_issues} ci
-                WHERE component = :component AND courseid = :courseid AND templateid = :templateid";
+                WHERE component = :component AND courseid = :courseid AND templateid = :templateid
+                      AND archived = 0";
         $params = ['component' => 'mod_coursecertificate', 'courseid' => $courseid,
             'templateid' => $templateid];
         return [$sql, $params];
