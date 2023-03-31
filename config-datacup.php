@@ -47,8 +47,7 @@ $CFG->forced_plugin_settings['enrol_autoenrol'] = [
         'sendcoursewelcomemessage' => "0",
 ];
 $CFG->forced_plugin_settings['theme_moove'] = [
-	'logo' => $CFG->wwwroot . "/theme/moove/pix/giz-logo.svg",
-	'favicon' => $CFG->wwwroot . "/theme/moove/pix/gizico.ico",
+	'logo' => "",
         'alertmsg' => "",
         'bannercontent' => "The atingibox offers you the possibility to access high quality courses in areas with no or limited internet. ",
         'bannerheading' => "atingi in a box",
@@ -81,7 +80,16 @@ $CFG->forced_plugin_settings['theme_moove'] = [
         'numbersfrontpage' => "0",
         'preset' => "default.scss",
         'presetfiles' => "",
-        'scss' => " @media (max-width: 767.98px) {
+        'scss' => "
+
+.navbar-brand {
+    background-image: url(/theme/moove/pix/atingi-logo.svg);
+    width: 220px;
+    height: 60px;
+    padding: 0;
+    span { display: none !important; } 
+}
+@media (max-width: 767.98px) {
 body.drawer-open-left, body.drawer-open-right {
     overflow-y: visible;
 }
