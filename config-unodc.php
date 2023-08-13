@@ -1,6 +1,7 @@
 <?php
 $CFG->theme = "moove";
 $CFG->themedesignermode = "0";
+$CFG->allowthemechangeonurl = "1";
 $CFG->auth = "none";
 $CFG->authpreventaccountcreation = "0";
 $CFG->enrol_plugins_enabled = "manual,guest,self,cohort,autoenrol";
@@ -47,12 +48,11 @@ $CFG->forced_plugin_settings['enrol_autoenrol'] = [
         'sendcoursewelcomemessage' => "0",
 ];
 $CFG->forced_plugin_settings['theme_moove'] = [
-        'logo' => $CFG->wwwroot . "/theme/moove/pix/UNODC_Logos.png",
-        'favicon' => $CFG->wwwroot . "/theme/moove/pix/favicon.ico",
         'alertmsg' => "",
         'bannercontent' => "The unodcbox offers you the possibility to access high quality courses in areas with no or limited internet. ",
         'bannerheading' => "unodc in a box",
-        'brandcolor' => "#5700c3",
+        'brandcolor' => "#2ca9de",
+	'secondarymenucolor' => "#006288",
         'clientscount' => "1",
         'clientsfrontpage' => "0",
         'clientsimage1' => "",
@@ -81,10 +81,13 @@ $CFG->forced_plugin_settings['theme_moove'] = [
         'numbersfrontpage' => "0",
         'preset' => "default.scss",
         'presetfiles' => "",
-        'scss' => "",
+        'scss' => "
+.copyright, #page-footer .footer-columns{display: none;}
+#fitem_id_emailm, #id_moodle_picture, #id_moodle_additional_names, #id_moodle_interests, #id_moodle_optional, #fitem_id_description_editor, #id_timezone{display: none;}
+	",
         'scsspre' => "",
         'slidercap1' => "",
-        'slidercount' => "1",
+        'slidercount' => "0",
         'sliderenabled' => "0",
         'sliderfrontpage' => "0",
         'sliderimage1' => "",
@@ -102,6 +105,44 @@ $CFG->forced_plugin_settings['theme_moove'] = [
         'whatsapp' => "",
         'youtube' => "",
 ];
+$CFG->forced_plugin_settings['core_admin'] = [
+    'favicon' => "/favicon.ico",
+    'logo' => "/UNODC_LOGOS.png",
+    'logocompact' => "/UNODC_LOGOS.png",
+];
+$CFG->forced_plugin_settings['local_remote_backup_provider'] = [
+    'enableuserdata' => "0",
+    'enableuserprecheck' => "0",
+    'remotesite' => "https://elearningunodc.org",
+    'specific_export_username' => "",
+    'uniqueid' => "idnumber",
+];
+$CFG->forced_plugin_settings['tool_moodlebox'] = [
+    'buttonsinfooter' => "0",
+    'datetimebuttonsinfooter' => "0",
+    'ihavedonated' => "0",
+    'restartshutdownbuttonsinfooter' => "0",
+];
+$CFG->forced_plugin_settings['tool_dataprivacy'] = [
+    'requireallenddatesforuserdeletion' => "1",
+    'showdataretentionsummary' => "0",
+];
+$CFG->forced_plugin_settings['tool_moodlenet'] = [
+    'enablemoodlenet' => "0",
+];
+
+$CFG->defaultpreference_maildisplay = "0";
+$CFG->country = "KE";
+$CFG->enabledashboard = "0";
+$CFG->minpassworddigits = "0";
+$CFG->minpasswordlength = "8";
+$CFG->minpasswordlower = "0";
+$CFG->minpasswordnonalphanum = "0";
+$CFG->minpasswordupper = "0";
+$CFG->maxconsecutiveidentchars = "0";
+$CFG->passwordpolicycheckonlogin = "0";
+$CFG->sessiontimeout = "2419200";
+$CFG->sessiontimeoutwarning = "1200";
 $CFG->pathtodu = "/usr/bin/du";
 $CFG->pathtogs = "/usr/bin/gs";
 $CFG->pathtophp = "/usr/bin/php";
