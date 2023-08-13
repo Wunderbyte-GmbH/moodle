@@ -29,37 +29,31 @@ global $PAGE, $USER, $CFG;
 $id = required_param('id', PARAM_INT);
 $page = optional_param('page', 0, PARAM_INT);
 $perpage = optional_param('perpage', 10, PARAM_INT);
+$download = optional_param('download', false, PARAM_BOOL);
 
 [$course, $cm] = get_course_and_cm_from_cmid($id, 'coursecertificate');
 
 require_course_login($course, true, $cm);
 
-$outputpage = new \mod_coursecertificate\output\view_page($id, $page, $perpage, $course, $cm);
+$PAGE->set_url('/mod/coursecertificate/view.php', ['id' => $id]);
+$PAGE->set_title($course->shortname . ': ' . $PAGE->activityrecord->name);
+$PAGE->set_heading(format_string($course->fullname));
+
 $output = $PAGE->get_renderer('coursecertificate');
+$outputpage = new \mod_coursecertificate\output\view_page($id, $page, $perpage, $course, $cm);
 $data = $outputpage->export_for_template($output);
 
-// Redirect to view issue page if 'studentview' (user can not manage but can receive issues) and issue code is set.
-if ($data['studentview'] && isset($data['issuecode'])) {
-    $issueurl = new \moodle_url('/admin/tool/certificate/view.php', ['code' => $data['issuecode']]);
-    redirect($issueurl);
+if (!empty($data['viewurl']) && $download) {
+    // When we link to the course module for the student, we link with &download=1 parameter
+    // and with target=_blank. In other situations where the links to the view page is displayed
+    // (index page, logs, hardcoded links, etc), we need to make sure that the certificate will open in a
+    // new tab and user can return to where they came from. In this case we display a button on the page.
+    redirect($data['viewurl']);
 }
-
-$PAGE->set_url('/mod/coursecertificate/view.php', ['id' => $id]);
-$PAGE->set_title(format_string($data['certificatename']));
-$PAGE->set_heading(format_string($course->fullname));
 
 $context = \context_module::instance($id);
 $PAGE->set_context($context);
 
 echo $output->header();
-
-if ($CFG->version >= 2021050700) {
-    // Moodle 3.11 and above.
-    $cminfo = cm_info::create($cm);
-    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-    echo $output->activity_information($cminfo, $completiondetails, $activitydates);
-}
-
 echo $output->render_from_template('mod_coursecertificate/view_page', $data);
 echo $output->footer();

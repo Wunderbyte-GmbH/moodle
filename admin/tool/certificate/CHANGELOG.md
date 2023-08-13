@@ -1,17 +1,75 @@
 # Changelog
 
-## 3.11.9 (2022031630)
+## 4.2 - 2023-05-30
+### Changed
+- Removed strings: entitycertificateissues, errornopermissionissuecertificate, expires,
+  issuedon, issuenewcertificates, mappingerrorcertificateheader, mappingerrorcertificatelog,
+  nopermissionform, outcomecertificate, outcomecertificatedescription, point, receiveddate,
+  selectcertificate, toomanycertificatestoshow, type
+- Deprecated strings: editcertificate, issuenewcertificate, nopermissionform
+
+## 4.1.3 - 2023-04-25
+### Added
+- Compatibility with Moodle LMS 4.2
+- Compatibility with PHP 8.1 for Moodle LMS 4.1 and 4.2
+### Fixed
+- Prevent debugging messages about missing leftmargin and rightmargin field types
+
+## 4.1.2 - 2023-03-14
+### Added
+- Setting to skip some text filters when generating PDFs
+- Added support for certificate elements plugins settings
+### Changed
+- Added a new integer parameter to `tool_certificate_generator::issue` to specify the certificate issue courseid
+- Moved certificate issuing event before email is sent, so event processor can make changes (CONTRIB-8867).
+### Fixed
+- Fix exception on view certificate templates page due to duplicated alias (CONTRIB-9211)
+
+## 4.1.1 - 2023-01-17
+### Changed
+- Automated tests fixes
+
+## 4.0.5+ - 2023-01-11
+### Changed
+- Certificates PDFs now always open in a new tab
+### Removed
+- Removed "Modal forms" functionality since it is now implemented in core -
+  web service `tool_certificate_modal_form`, JS modules: `tool_certificate/modal_form`,
+  class `tool_certificate/modal_form`
+
+## 4.0.5 - 2022-11-15
+### Changed
+- Compatibility with Moodle LMS 4.1
+
+## 4.0.4+ (2022101400)
+### Fixed
+- Removed no longer existing user profile fields from the element form (Twitter/ICQ/etc)
+
+## 4.0.4 (2022091300)
+### Changed
+- Forms in the popups now use core dynamic forms
+- Easier navigation between editing template and issued certificates
+
+## 4.0.3 (2022082400)
+### Fixed
+- Fixed bug with the reportbuilder reports showing 'source unavailable' error to some users.
+
 ### Changed
 - Add lock when generating certificate
+- Convert certificates to use core reportbuilder system reports
 
-## 3.11.8 (2022031620)
+## 4.0.2 (2022071200)
 ### Added
 - Course certificates may be archived when a course is reset allowing to receive more than one
   certificate per user in the same course
 
-## 3.11.7 (2022031610)
+## 4.0.1 (2022051000)
 ### Changed
 - Prevent race condition resulting in issuing course certificate twice
+
+## 4.0.0 (2022042000)
+### Changed
+- This version of the plugin is only for Moodle LMS 4.0 and above
 
 ## 3.11.6 (2022031500)
 ### Added

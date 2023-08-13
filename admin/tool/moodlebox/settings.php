@@ -26,8 +26,10 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($hassiteconfig) { // Speedup for non-admins.
 
-    // Add new admin sub-category to category 'server' in admin tree.
-    $ADMIN->add('server', new admin_category('moodlebox', new lang_string('pluginname', 'tool_moodlebox')));
+    // Add new admin top category 'moodleboxcat' in admin tree.
+    $ADMIN->add('root', new admin_category('moodleboxcat', new lang_string('pluginname', 'tool_moodlebox')));
+    // Add new admin sub-category to category 'moodleboxcat' in admin tree.
+    $ADMIN->add('moodleboxcat', new admin_category('moodlebox', new lang_string('pluginname', 'tool_moodlebox')));
 
     // Add admin external page 'dashboard' to sub-category 'moodlebox'.
     $moodleboxadminpage = new admin_externalpage('tool_moodlebox',
@@ -53,9 +55,12 @@ if ($hassiteconfig) { // Speedup for non-admins.
         // Add settings.
         $moodleboxsettingpage->add(new admin_setting_heading('moodlebox_settingheading',
                 new lang_string('configuration', 'tool_moodlebox'), ''));
-        $moodleboxsettingpage->add(new admin_setting_configcheckbox('tool_moodlebox/buttonsinfooter',
-                new lang_string('showbuttonsinfooter', 'tool_moodlebox'),
-                new lang_string('showbuttonsinfooter_desc', 'tool_moodlebox'), 0));
+        $moodleboxsettingpage->add(new admin_setting_configcheckbox('tool_moodlebox/datetimebuttonsinfooter',
+                new lang_string('showdatetimebuttonsinfooter', 'tool_moodlebox'),
+                new lang_string('showdatetimebuttonsinfooter_desc', 'tool_moodlebox'), 0));
+        $moodleboxsettingpage->add(new admin_setting_configcheckbox('tool_moodlebox/restartshutdownbuttonsinfooter',
+                new lang_string('showrestartshutdownbuttonsinfooter', 'tool_moodlebox'),
+                new lang_string('showrestartshutdownbuttonsinfooter_desc', 'tool_moodlebox'), 0));
         $moodleboxsettingpage->add(new admin_setting_configcheckbox('tool_moodlebox/ihavedonated',
                 new lang_string('ihavedonated', 'tool_moodlebox'),
                 new lang_string('ihavedonated_desc', 'tool_moodlebox'), 0));

@@ -22,9 +22,12 @@ use tool_certificate_generator;
 /**
  * Unit tests for the webservices.
  *
+ * @runTestsInSeparateProcesses
+ *
  * @package    tool_certificate
  * @group      tool_certificate
  * @category   test
+ * @covers     \tool_certificate\external\issues
  * @copyright  2018 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -146,7 +149,8 @@ class external_test extends advanced_testcase {
      * Test regenerate_issue_file
      */
     public function test_regenerate_issue_file() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->libdir . '/externallib.php');
 
         $this->setAdminUser();
 

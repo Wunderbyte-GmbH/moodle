@@ -42,7 +42,7 @@ settings_file = os.path.join(os.path.dirname(this_dir), '.wifisettings')
 # Path of various config files.
 hostapd_conf_file = "/etc/hostapd/hostapd.conf"
 dhcpcd_conf_file = "/etc/dhcpcd.conf"
-dnsmasq_conf_file = "/etc/dnsmasq.conf"
+dnsmasq_conf_file = "/etc/dnsmasq.d/uap0.conf"
 dnsmasq_lease_file = "/var/lib/misc/dnsmasq.leases"
 hosts_file = "/etc/hosts"
 nodogsplash_conf_file = "/etc/nodogsplash/nodogsplash.conf"
@@ -104,7 +104,7 @@ file_replace_line(hostapd_conf_file, 'channel=.*', 'channel=' + new_channel)
 
 # SSID setting.
 # Validate new SSID. At this point, new_ssid is a string of hex values,
-# e.g. "74657374" for "test". We want to check that it is valid, and
+# e.g. "44756D6D79" for "Dummy". We want to check that it is valid, and
 # between 1 and 32 bytes.
 ssid_pattern = re.compile('^(?:[0-9a-fA-F]{2}){1,32}$')
 if not bool(ssid_pattern.search(new_ssid)):
@@ -138,7 +138,7 @@ if password_protected not in ['0','1']:
     password_protected = True
 else:
     password_protected = (password_protected == '1')
-# Check if line "wpa_passphrase=..." exist uncommented in config file.
+# Check if line "wpa_passphrase=..." exists uncommented in config file.
 # If found, the Wi-Fi network is currently password protected.
 is_currently_protected = bool(is_regex_in_file(hostapd_conf_file, r'^wpa_passphrase=\b'))
 # Set parameters adequately.

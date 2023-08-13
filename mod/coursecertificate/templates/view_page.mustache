@@ -22,7 +22,6 @@
     Example context (json):
     {
         "certificateid": 1,
-        "certificatename": "Certificate Name",
         "showautomaticsend": true,
         "showreport": true,
         "automaticsend": true,
@@ -33,7 +32,11 @@
     }
 }}
 <div data-region="mod_coursecertificate_view">
-    <h2>{{certificatename}}</h2>
+    {{#viewurl}}
+        <div class="mdl-align mb-3">
+            <a class="btn btn-primary" href="{{viewurl}}" target="_blank">{{#str}}viewcertificate, tool_certificate{{/str}}</a>
+        </div>
+    {{/viewurl}}
     {{#studentview}}
         {{#notemplateselected}}
             <div class="alert alert-danger mt-3">
@@ -69,8 +72,9 @@
 
 {{#js}}
     {{^studentview}}
-    require(['mod_coursecertificate/manager'], function(m) {
-        m.init();
+    require(['tool_certificate/issues-list', 'mod_coursecertificate/manager'], function(issuesList, manager) {
+        issuesList.init();
+        manager.init();
     });
     {{/studentview}}
 {{/js}}

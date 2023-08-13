@@ -120,9 +120,11 @@ class tool_certificate_generator extends component_generator_base {
      * @param int $expires
      * @param array $data
      * @param string $component
+     * @param int|null $courseid
      * @return stdClass
      */
-    public function issue($certificate, $user, $expires = null, $data = [], $component = 'tool_certificate') {
+    public function issue($certificate, $user, $expires = null, $data = [], $component = 'tool_certificate',
+                          ?int $courseid = null): stdClass {
         global $DB;
         if (is_int($certificate)) {
             $certificate = \tool_certificate\template::instance($certificate);
@@ -130,7 +132,7 @@ class tool_certificate_generator extends component_generator_base {
             $certificate = \tool_certificate\template::instance(0, $certificate);
         }
         $userid = is_object($user) ? $user->id : $user;
-        $issueid = $certificate->issue_certificate($userid, $expires, $data, $component);
+        $issueid = $certificate->issue_certificate($userid, $expires, $data, $component, $courseid);
         return $DB->get_record('tool_certificate_issues', ['id' => $issueid], '*', MUST_EXIST);
     }
 
@@ -172,5 +174,19 @@ class tool_certificate_generator extends component_generator_base {
     public function assign_manage_capability(int $userid, int $roleid, context $context): void {
         assign_capability('tool/certificate:manage', CAP_ALLOW, $roleid, $context->id);
         role_assign($roleid, $userid, $context->id);
+    }
+
+    /**
+     * Creates a template with an empty page and an edit element
+     *
+     * @param string $elementtype
+     * @return \tool_certificate\edit_element_form
+     */
+    public function create_template_and_edit_element_form(string $elementtype): \tool_certificate\edit_element_form {
+        $certificate1 = $this->create_template((object)['name' => 'Certificate 1']);
+        $pageid = $this->create_page($certificate1)->get_id();
+
+        $ajaxformdata = ['pageid' => $pageid, 'element' => $elementtype];
+        return new \tool_certificate\edit_element_form(null, null, 'post', '', [], true, $ajaxformdata, true);
     }
 }

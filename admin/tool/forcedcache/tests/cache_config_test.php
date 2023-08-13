@@ -14,25 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_forcedcache;
+
 /**
- * Test file for tool_forcedcache_cache_config.
+ * Tests for tool_forcedcache_cache_config.
  *
  * @package     tool_forcedcache
  * @author      Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers      \tool_forcedcache_cache_config
  */
-
-namespace tool_forcedcache\tests;
-
-/**
- * Tests for forced cache configuration.
- *
- * @package     tool_forcedcache
- * @author      Peter Burnett <peterburnett@catalyst-au.net>
- * @copyright   Catalyst IT
- */
-class tool_forcedcache_cache_config_testcase extends \advanced_testcase {
+class cache_config_test extends \advanced_testcase {
 
     /**
      * We need to load the config files outside of the $CFG->dirroot, so it
@@ -48,9 +41,6 @@ class tool_forcedcache_cache_config_testcase extends \advanced_testcase {
         return realpath($dest);
     }
 
-    /**
-     * Tests reading config file from invalid path.
-     */
     public function test_read_config_file_from_invalid_path() {
         global $CFG;
         $this->resetAfterTest(true);
@@ -76,9 +66,6 @@ class tool_forcedcache_cache_config_testcase extends \advanced_testcase {
         $method->invoke($config);
     }
 
-    /**
-     * Tests reading invalid config file.
-     */
     public function test_read_valid_config_file() {
         global $CFG;
         $this->resetAfterTest(true);
@@ -103,9 +90,6 @@ class tool_forcedcache_cache_config_testcase extends \advanced_testcase {
         $this->assertArrayHasKey('definitionoverrides', $configarr1);
     }
 
-    /**
-     * Tests reading garbled config file.
-     */
     public function test_read_garbled_config_file() {
         global $CFG;
         $this->resetAfterTest(true);
@@ -128,9 +112,6 @@ class tool_forcedcache_cache_config_testcase extends \advanced_testcase {
         $method->invoke($config);
     }
 
-    /**
-     * Tests reading non-existing config file.
-     */
     public function test_read_non_existent_config_file() {
         global $CFG;
         $this->resetAfterTest(true);
@@ -153,9 +134,7 @@ class tool_forcedcache_cache_config_testcase extends \advanced_testcase {
         $method->invoke($config);
     }
 
-    /**
-     * Tests bad type of a generated store instance.
-     */
+
     public function test_generate_store_instance_config() {
         // Directly create a config.
         $config = new \tool_forcedcache_cache_config();
@@ -176,13 +155,20 @@ class tool_forcedcache_cache_config_testcase extends \advanced_testcase {
         // Now test with 0 stores declared and confirm its just the defaults.
         $this->assertEquals($storezero['expected'], $method->invoke($config, $storezero['input']));
 
-        // Now test store with where store isn't ready, don't instantiate (APCu doesn't work from CLI).
-        $this->assertEquals($storereqsnotmet['expected'], $method->invoke($config, $storereqsnotmet['input']));
-
         // Now test a store with a bad type.
         $this->expectException(\cache_exception::class);
         $this->expectExceptionMessage(get_string('store_bad_type', 'tool_forcedcache', 'faketype'));
         $storearr1 = $method->invoke($config, $storebadtype['input']);
+        $this->assertNull($storearr1);
+
+        // Now test a store with a missing required field.
+        $this->expectException(\cache_exception::class);
+        $this->expectExceptionMessage(get_string('store_missing_fields', 'tool_forcedcache', 'apcu-test'));
+        $storearr1 = $method->invoke($config, $storemissingfields['input']);
+        $this->assertNull($storearr1);
+
+        // Now test store with where store isn't ready, don't instantiate (APCu doesn't work from CLI).
+        $this->assertEquals($storereqsnotmet['expected'], $method->invoke($config, $storereqsnotmet['input']));
     }
 
     /**
@@ -210,11 +196,10 @@ class tool_forcedcache_cache_config_testcase extends \advanced_testcase {
         include(__DIR__ . '/fixtures/mode_mappings_data.php');
         include(__DIR__ . '/fixtures/definition_mappings_data.php');
 
-        $expected = $generatedmodemapping;
+        $expected = $generatedmodemappingagainstdefinitionmatchtoprulesetexpected;
         $rules = $definitionmatchtopruleset['rules'];
         $this->assertEquals($expected, $method->invoke($config, $rules));
     }
-
     /**
      * Tests output of mode mpapings once rules included in the mix.
      */
@@ -232,9 +217,6 @@ class tool_forcedcache_cache_config_testcase extends \advanced_testcase {
         $this->assertEquals($defaultsexpected, $method->invoke($config, $rules));
     }
 
-    /**
-     * Tests definition mappings generated from rules.
-     */
     public function test_generate_definition_mappings_from_rules() {
         $config = new \tool_forcedcache_cache_config();
 

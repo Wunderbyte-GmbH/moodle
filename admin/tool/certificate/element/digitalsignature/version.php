@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 // This plugin is part of Moodle Workplace product.
 $plugin->component    = 'certificateelement_digitalsignature';
-$plugin->release      = '3.11.9';
-$plugin->version      = 2022031630;
-$plugin->requires     = 2020061502.00;
+$plugin->release      = '4.2';
+$plugin->version      = 2023053000;
+$plugin->requires     = 2022041900.00;
 $plugin->maturity     = MATURITY_STABLE;

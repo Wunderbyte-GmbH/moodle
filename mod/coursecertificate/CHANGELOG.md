@@ -1,17 +1,56 @@
 # Changelog
 
-## 3.11.9 (2022031630)
+## 4.2 - 2023-05-30
 ### Changed
+- Removed strings: automaticsenddisabledinfo, enableautomaticsend, selecttemplatewarning,
+  taskissuecertificates, template
+- Deprecated strings: certificateissues, revoke, revokeissue, selectdate, status
+
+## 4.1.3 - 2023-04-25
+### Added
+- Compatibility with Moodle LMS 4.2
+- Compatibility with PHP 8.1 for Moodle LMS 4.1 and 4.2
+### Fixed
+- Prevent debugging messages about missing leftmargin and rightmargin field types
+
+## 4.1.2 - 2023-03-14
+### Added
+- Setting to skip some text filters when generating PDFs
+
+## 4.1.1 - 2023-01-17
+### Changed
+- Automated tests fixes
+
+## 4.0.5+ - 2023-01-11
+### Changed
+- Certificates PDFs now always open in a new tab
+
+## 4.0.5 - 2022-11-15
+### Changed
+- Added testing on LMS 4.1 (no functional changes)
+
+## 4.0.4+ (2022101400)
+- No changes, released to match the version of tool_certificate
+
+## 4.0.3 (2022082400)
+### Changed
+- Use system report for certificate issues.
 - Add lock when generating certificate
 
-## 3.11.8 (2022031620)
+## 4.0.2 (2022071200)
 ### Added
 - Course certificates may be archived when a course is reset allowing to receive more than one
   certificate per user in the same course
 
-## 3.11.7 (2022031610)
+## 4.0.1 (2022051000)
 ### Changed
 - Prevent race condition resulting in issuing course certificate twice
+
+## 4.0.0 (2022042000)
+### Changed
+- This version of the plugin is only for Moodle LMS 4.0 and above
+- New icon for Moodle LMS 4.0
+- Use new API to display activity header
 
 ## 3.11.6 (2022031500)
 ### Added

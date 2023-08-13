@@ -28,6 +28,7 @@ Feature: Basic functionality of course certificate module
       | capability                     | permission | role                 | contextlevel | reference |
       | tool/certificate:issue         | Allow      | certificateissuer    | System       |           |
 
+  @_switch_window
   Scenario: Teacher can create an instance of course certificate module
     And the following certificate templates exist:
       | name                         | shared  |
@@ -49,7 +50,7 @@ Feature: Basic functionality of course certificate module
     And I press "Save and display"
     And I should see "Your awesome certificate"
     And I should see "The automatic sending of this certificate is disabled"
-    And I should see "No users are certified."
+    And I should see "Nothing to display"
     And I press "Enable"
     And I press "Confirm"
     And I should see "The automatic sending of this certificate is enabled"
@@ -62,7 +63,7 @@ Feature: Basic functionality of course certificate module
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I click on "Your super awesome certificate" "link" in the "region-main" "region"
-    And I press the "back" button in the browser
+    And I switch to the main window
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -71,6 +72,7 @@ Feature: Basic functionality of course certificate module
       | First name | Status | Expiry date |
       | Student 1  | Valid  | Never       |
 
+  @_switch_window
   Scenario: Teacher can create an instance of course certificate module with expiry date absolute
     And the following certificate templates exist:
       | name                         | shared  |
@@ -90,7 +92,7 @@ Feature: Basic functionality of course certificate module
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I click on "Your awesome certificate" "link" in the "region-main" "region"
-    And I press the "back" button in the browser
+    And I switch to the main window
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -99,6 +101,7 @@ Feature: Basic functionality of course certificate module
       | First name | Status | Expiry date            |
       | Student 1  | Valid  | ##tomorrow##%d %B %Y## |
 
+  @_switch_window
   Scenario: Teacher can create an instance of course certificate module with expiry date relative
     And the following certificate templates exist:
       | name                         | shared  |
@@ -117,7 +120,7 @@ Feature: Basic functionality of course certificate module
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I click on "Your awesome certificate" "link" in the "region-main" "region"
-    And I press the "back" button in the browser
+    And I switch to the main window
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage
@@ -158,7 +161,7 @@ Feature: Basic functionality of course certificate module
     And I press "Save and display"
     And I should see "Your awesome certificate"
     And I should see "The automatic sending of this certificate is disabled"
-    And I should see "No users are certified."
+    And I should see "Nothing to display"
 
   Scenario: Teacher can not create course certificate if there are not available templates
     And the following certificate templates exist:
@@ -213,10 +216,9 @@ Feature: Basic functionality of course certificate module
       | Name     | Your awesome certificate     |
       | Template | Certificate of participation |
     Then I click on "Your awesome certificate" "link" in the "region-main" "region"
-    And I should see "Student 1"
-    And I click on "Revoke" "link"
-    And I press "Confirm"
-    And I should see "No users are certified."
+    And I press "Revoke" action in the "Student 1" report row
+    And I click on "Revoke" "button" in the "Confirm" "dialogue"
+    And I should see "Nothing to display"
 
   Scenario: Teacher can manage blocks in the module page
     And the following certificate templates exist:
@@ -250,8 +252,9 @@ Feature: Basic functionality of course certificate module
     And I should see "Certificate 01"
     And I should see "Certificate 02"
     And I click on "Certificate 01" "link" in the "region-main" "region"
-    And I should see "No users are certified."
+    And I should see "Nothing to display"
 
+  @_switch_window
   Scenario: Display course certificate after removing current selected template.
     And the following certificate templates exist:
       | name                           | shared  |
@@ -262,7 +265,8 @@ Feature: Basic functionality of course certificate module
       | coursecertificate | Certificate 01 | Certificate intro | C1     | coursecertificate1 | Certificate of participation A |
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Delete" "link" in the "Certificate of participation A" "table_row"
+    And I click on "Actions" "icon" in the "Certificate of participation A" "table_row"
+    And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Confirm" "dialogue"
     And I log out
     And I log in as "teacher1"
@@ -273,7 +277,9 @@ Feature: Basic functionality of course certificate module
     And I log in as "student1"
     And I am on "Course 1" course homepage
     And I click on "Certificate 01" "link" in the "region-main" "region"
+    And I switch to a second window
     Then I should see "The certificate is not available. Please contact the course administrator."
+    And I switch to the main window
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on

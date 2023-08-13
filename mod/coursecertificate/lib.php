@@ -22,6 +22,8 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_coursecertificate\permission;
+
 /**
  * Checks if certificate activity supports a specific feature.
  *
@@ -36,7 +38,7 @@
  * @param string $feature FEATURE_xx constant for requested feature
  * @return mixed True if module supports feature, false if not, null if doesn't know
  */
-function coursecertificate_supports(string $feature): ?bool {
+function coursecertificate_supports(string $feature) {
     switch($feature) {
         case FEATURE_GROUPS:
             return true;
@@ -52,6 +54,8 @@ function coursecertificate_supports(string $feature): ?bool {
             return true;
         case FEATURE_BACKUP_MOODLE2:
             return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_ASSESSMENT;
         default:
             return null;
     }
@@ -110,12 +114,17 @@ function coursecertificate_update_instance(stdClass $data, mod_coursecertificate
 function coursecertificate_delete_instance(int $id): bool {
     global $DB;
 
-    $activity = $DB->get_record('coursecertificate', ['id' => $id]);
-    if (!$activity) {
+    if (!$DB->record_exists('coursecertificate', ['id' => $id])) {
         return false;
     }
 
+    if (!$cm = get_coursemodule_from_instance('coursecertificate', $id)) {
+        return false;
+    }
+    $context = context_module::instance($cm->id);
+
     $DB->delete_records('coursecertificate', ['id' => $id]);
+    $DB->delete_records('reportbuilder_report', ['contextid' => $context->id]);
 
     return true;
 }
@@ -146,13 +155,7 @@ function mod_coursecertificate_tool_certificate_fields() {
     }
 
     $handler = tool_certificate\customfield\issue_handler::create();
-    if ($CFG->version < 2021050700) {
-        // Moodle 3.9-3.10.
-        $gradestring = get_string('grade');
-    } else {
-        // Moodle 3.11 and above.
-        $gradestring = get_string('gradenoun');
-    }
+    $gradestring = get_string('gradenoun');
 
     // TODO: the only currently supported field types are text/textarea (numeric will fallback to text).
     $handler->ensure_field_exists('courseid', 'numeric',
@@ -246,4 +249,47 @@ function coursecertificate_reset_course_form_defaults($course) {
     return [
         'archive_certificates' => 1,
     ];
+}
+
+/**
+ * Callback from modinfo allowing to add attributes to individual student link
+ *
+ * @param cm_info $coursemodule the cm_info object for the Appointment instance
+ */
+function mod_coursecertificate_cm_info_dynamic(cm_info $coursemodule) {
+    $canviewissues = permission::can_view_all_issues($coursemodule->course);
+    $canreceive = permission::can_receive_issues(context_course::instance($coursemodule->course));
+    if (!$canviewissues && $canreceive) {
+        // In case when user can only download their own certificate and do nothing else -
+        // take them directly to their certificate (open in a new window).
+        $fullurl = new moodle_url("/mod/coursecertificate/view.php",
+            ['id' => $coursemodule->id, 'download' => 1]);
+        $onclick = "window.open('$fullurl'); return false;";
+        $coursemodule->set_on_click($onclick);
+    }
+}
+
+/**
+ * Callback allowing to add warning on the filter settings page
+ */
+function mod_coursecertificate_before_http_headers() {
+    global $PAGE, $CFG;
+    if ($PAGE->context->contextlevel == CONTEXT_MODULE &&
+            $PAGE->url->compare(new moodle_url('/filter/manage.php'), URL_MATCH_BASE) &&
+            $PAGE->activityname === 'coursecertificate') {
+        if ($allowedfilters = \tool_certificate\element_helper::get_allowed_filters()) {
+            $link = new moodle_url('/filter/manage.php', ['contextid' => $PAGE->context->get_course_context()->id]);
+            $a = (object)[
+                'link' => $link->out(),
+                'list' => join(', ', $allowedfilters),
+            ];
+            $message = get_string('filterswarninglist', 'mod_coursecertificate', $a);
+        } else {
+            $message = get_string('filterswarningnone', 'mod_coursecertificate');
+        }
+        \core\notification::add(
+            get_string('filterswarning', 'mod_coursecertificate') .
+            '<br>' . $message,
+            \core\output\notification::NOTIFY_WARNING);
+    }
 }

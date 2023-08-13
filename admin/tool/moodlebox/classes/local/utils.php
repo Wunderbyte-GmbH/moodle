@@ -24,8 +24,6 @@
 
 namespace tool_moodlebox\local;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Utilities for tool_moodlebox
  *
@@ -66,11 +64,11 @@ class utils {
      * | A | 00-03 | PCB Revision  | The PCB revision number                            |
      * | B | 04-11 | Model name    | A, B, A+, B+, 2B, Alpha, CM1, unknown, 3B, Zero,   |
      * |   |       |               | CM3, unknown, Zero W, 3B+, 3A+, internal, CM3+,    |
-     * |   |       |               | 4B, Zero 2 W, 400, CM4                             |
+     * |   |       |               | 4B, Zero 2 W, 400, CM4, CM4S                       |
      * | C | 12-15 | Processor     | BCM2835, BCM2836, BCM2837, BCM2711                 |
      * | D | 16-19 | Manufacturer  | Sony UK, Egoman, Embest, Sony Japan,               |
      * |   |       |               | Embest, Stadium                                    |
-     * | E | 20-22 | Memory size   | 256 MB, 512 MB, 1 GB, 2 GB, 4 GB, 8 GB             |
+     * | E | 20-22 | Memory size   | 256MB, 512MB, 1GB, 2GB, 4GB, 8GB                   |
      * | F | 23-23 | Revision flag | If set, new-style revision                         |
      * | G | 24-24 | Unused        |                                                    |
      * | H | 25-25 | Warranty bit  | If set, warranty void by overclocking (post Pi2)   |
@@ -83,22 +81,22 @@ class utils {
      * @return associative array of parameters, value or false if unsupported hardware.
      */
     public static function get_hardware_model() {
-        $revisionnumber = null;
+        $revisioncode = '';
 
         // Read revision number from device.
         if ( $cpuinfo = @file_get_contents('/proc/cpuinfo') ) {
             if ( preg_match_all('/^Revision.*/m', $cpuinfo, $revisionmatch) > 0 ) {
-                $revisionnumber = explode(' ', $revisionmatch[0][0]);
-                $revisionnumber = end($revisionnumber);
+                $revisioncode = explode(' ', $revisionmatch[0][0]);
+                $revisioncode = end($revisioncode);
             }
         }
-        $revisionnumber = hexdec($revisionnumber);
+        $revisionnumber = hexdec($revisioncode);
 
         // Define arrays of various hardware parameter values.
-        $memorysizes = array('256 MB', '512 MB', '1 GB', '2 GB', '4 GB', '8 GB');
+        $memorysizes = array('256MB', '512MB', '1GB', '2GB', '4GB', '8GB');
         $models = array('A', 'B', 'A+', 'B+', '2B', 'Alpha', 'CM1', 'Unknown',
                 '3B', 'Zero', 'CM3', 'Unknown', 'ZeroW', '3B+', '3A+', 'Internal use',
-                'CM3+', '4B', 'Zero2W', '400', 'CM4');
+                'CM3+', '4B', 'Zero2W', '400', 'CM4', 'CM4S');
         $processors = array('BCM2835', 'BCM2836', 'BCM2837', 'BCM2711');
         $manufacturers = array('Sony UK', 'Egoman', 'Embest', 'Sony Japan',
                 'Embest', 'Stadium');
@@ -121,6 +119,7 @@ class utils {
             $memorysize = $memorysizes[$rawmemory];
 
             return array(
+                'revisioncode' => $revisioncode,
                 'revision' => $revision,
                 'model' => $model,
                 'processor' => $processor,
@@ -359,6 +358,7 @@ class utils {
             'moodleboxversion' => $moodleboxinfo,
             'pluginversion' => $plugin->release . ' (' . $plugin->version . ')',
             'sdsize' => disk_total_space('/'),
+            'timestamp' => time(),
         );
 
         return $surveydata;

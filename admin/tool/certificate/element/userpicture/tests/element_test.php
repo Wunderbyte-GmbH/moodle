@@ -25,6 +25,7 @@ use core_text;
  *
  * @package    certificateelement_userpicture
  * @group      tool_certificate
+ * @covers     \certificateelement_userpicture\element
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -85,5 +86,16 @@ class element_test extends advanced_testcase {
         $filecontents = $this->get_generator()->generate_pdf($certificate1, false, $issue);
         $filesize = core_text::strlen($filecontents);
         $this->assertTrue($filesize > 30000 && $filesize < 70000);
+    }
+
+    /**
+     * Tests that the edit element form can be initiated without any errors
+     */
+    public function test_edit_element_form() {
+        $this->setAdminUser();
+
+        preg_match('|^certificateelement_(\w*)\\\\|', get_class($this), $matches);
+        $form = $this->get_generator()->create_template_and_edit_element_form($matches[1]);
+        $this->assertNotEmpty($form->render());
     }
 }

@@ -34,6 +34,7 @@ use core_text;
  *
  * @package    certificateelement_border
  * @group      tool_certificate
+ * @covers     \certificateelement_border\element
  * @copyright  2018 Daniel Neis Araujo <daniel@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -87,5 +88,16 @@ class element_test extends advanced_testcase {
         $e->save_form_data($newdata);
         $el = $DB->get_record('tool_certificate_elements', ['id' => $e->get_id()]);
         $this->assertEquals($newdata->width, $el->data);
+    }
+
+    /**
+     * Tests that the edit element form can be initiated without any errors
+     */
+    public function test_edit_element_form() {
+        $this->setAdminUser();
+
+        preg_match('|^certificateelement_(\w*)\\\\|', get_class($this), $matches);
+        $form = $this->get_generator()->create_template_and_edit_element_form($matches[1]);
+        $this->assertNotEmpty($form->render());
     }
 }

@@ -24,6 +24,7 @@
 
 namespace tool_certificate;
 
+use context_helper;
 use core\message\message;
 use core\output\inplace_editable;
 use core_user;
@@ -293,7 +294,7 @@ class template {
             if ($return) {
                 return $pdf->Output('', 'S');
             }
-            if (defined('PHPUNIT_TEST') and PHPUNIT_TEST) {
+            if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
                 // For some reason phpunit on travis-ci.com do not return 'cli' on php_sapi_name().
                 echo $pdf->Output($filename, 'S');
             } else {
@@ -445,7 +446,7 @@ class template {
      * @return string the name of the template
      */
     public function get_formatted_name() {
-        return format_string($this->get_name(), true, ['escape' => false]);
+        return $this->persistent->get_formatted_name();
     }
 
     /**
@@ -453,7 +454,7 @@ class template {
      *
      * @return inplace_editable
      */
-    public function get_editable_name() : inplace_editable {
+    public function get_editable_name(): inplace_editable {
         $editable = $this->can_manage();
         $displayname = $this->get_formatted_name();
         if ($editable) {
@@ -471,7 +472,7 @@ class template {
      *
      * @return \context the context
      */
-    public function get_context() {
+    public function get_context(): \context {
         return \context::instance_by_id($this->persistent->get('contextid'));
     }
 
@@ -609,10 +610,13 @@ class template {
 
     /**
      * Can view issues for this template
+     *
+     * @param \context|null $issuecontext
      * @return bool
      */
-    public function can_view_issues() {
-        return permission::can_view_templates_in_context($this->get_context());
+    public function can_view_issues(\context $issuecontext = null) {
+        // The context is not always matching template context, e.g. when template is used in the course module.
+        return permission::can_view_templates_in_context($issuecontext ?? $this->get_context());
     }
 
     /**
@@ -673,6 +677,9 @@ class template {
     /**
      * Issues a certificate to a user.
      *
+     * @uses \tool_tenant\config::push_for_user()
+     * @uses \tool_tenant\config::pop()
+     *
      * @param int $userid The ID of the user to issue the certificate to
      * @param int $expires The timestamp when the certificate will expiry. Null if do not expires.
      * @param array $data Additional data that will json_encode'd and stored with the issue.
@@ -684,6 +691,8 @@ class template {
     public function issue_certificate($userid, $expires = null, array $data = [], $component = 'tool_certificate',
             $courseid = null, ?\core\lock\lock $lock = null) {
         global $DB;
+
+        component_class_callback(\tool_tenant\config::class, 'push_for_user', [$userid]);
 
         $issue = new \stdClass();
         $issue->userid = $userid;
@@ -707,12 +716,17 @@ class template {
         }
         issue_handler::create()->save_additional_data($issue, $data);
 
+        // Trigger event.
+        \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
+
+        // Reload issue from DB in case the event handlers modified it.
+        $issue = $this->get_issue_from_code($issue->code);
+
         // Create the issue file and send notification.
         $issuefile = $this->create_issue_file($issue);
         self::send_issue_notification($issue, $issuefile);
 
-        // Trigger event.
-        \tool_certificate\event\certificate_issued::create_from_issue($issue)->trigger();
+        component_class_callback(\tool_tenant\config::class, 'pop', []);
 
         return $issue->id;
     }
@@ -870,7 +884,7 @@ class template {
         global $DB;
 
         list($sql, $params) = self::get_visible_categories_contexts_sql();
-        $sql = "SELECT tct.id, tct.name
+        $sql = "SELECT tct.id, tct.name, tct.contextid
                   FROM {tool_certificate_templates} tct
                   JOIN {context} ctx
                     ON ctx.id = tct.contextid AND " . $sql .
@@ -880,7 +894,8 @@ class template {
 
         $list = [];
         foreach ($templates as $t) {
-            $list[$t->id] = format_string($t->name);
+            context_helper::preload_from_record($t);
+            $list[$t->id] = format_string($t->name, true, ['context' => $t->contextid, 'escape' => false]);
         }
         return $list;
     }
