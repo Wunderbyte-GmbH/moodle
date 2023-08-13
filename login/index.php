@@ -155,7 +155,7 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
     } else {
         if (empty($errormsg)) {
             $logintoken = isset($frm->logintoken) ? $frm->logintoken : '';
-            if ($DB->record_exists('user', [username => $frm->username])) {
+            if ($DB->record_exists('user', ['username' => $frm->username])) {
                 $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
             } else {
                 $user = new stdClass();
