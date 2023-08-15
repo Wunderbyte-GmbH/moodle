@@ -126,7 +126,8 @@ $templatecontext = [
     'addblockbutton' => $addblockbutton,
     'enablecourseindex' => $themesettings->enablecourseindex,
     'addcontentblockbutton' => $addcontentblockbutton,
-    'contentblocks' => $contentblocks
+    'contentblocks' => $contentblocks,
+    'summary' => $PAGE->course->summary
 ];
 
 $templatecontext = array_merge($templatecontext, $themesettings->footer());

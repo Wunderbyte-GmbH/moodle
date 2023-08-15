@@ -148,4 +148,5 @@ $CFG->pathtogs = "/usr/bin/gs";
 $CFG->pathtophp = "/usr/bin/php";
 $CFG->pathtopython = "/usr/bin/python";
 $CFG->additionalhtmlhead = "<link href=\"/theme/moove/unodc.css\" rel=\"stylesheet\">";
+$CFG->customusermenuitems = "profile,moodle|/user/profile.php";
 
