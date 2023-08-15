@@ -150,3 +150,58 @@ $CFG->pathtopython = "/usr/bin/python";
 $CFG->additionalhtmlhead = "<link href=\"/theme/moove/unodc.css\" rel=\"stylesheet\">";
 $CFG->customusermenuitems = "profile,moodle|/user/profile.php";
 
+$CFG->session_handler_class = '\core\session\redis';
+$CFG->session_redis_host = '127.0.0.1';
+$CFG->session_redis_port = 6379;
+$CFG->session_redis_database = 0;
+$CFG->session_redis_prefix = 'musi_sess_';
+$CFG->session_redis_acquire_lock_timeout = 20; // default value was 120, maximum should be the max_execution_time
+$CFG->session_redis_lock_expire = 12; // 2 minutes session locking, default was 7200 --> 2hours??
+$CFG->session_redis_serializer_use_igbinary = true;
+
+$CFG->tool_forcedcache_config_array = [
+    "stores" => [
+        "redis01" => [
+            "type" => "redis",
+            "name" => "redis01",
+            "config" => [
+                "password" => "",
+                "database" => 0,
+                "prefix" => "musi_sess_",
+                "server" => "127.0.0.1:6379",
+                "serializer" => 2,
+                "compressor" => 0
+            ]
+        ],
+        "redis02" => [
+            "type" => "redis",
+            "name" => "redis02",
+            "config" => [
+                "database" => 1,
+                "server" => "127.0.0.1:6379",
+                "prefix" => "musi_",
+                "password" => "",
+                "serializer" => 2,
+                "compressor" => 0
+            ]
+        ]
+    ],
+    "rules" => [
+        "application" => [
+            [
+                "stores" => [
+                    "redis02"
+                ]
+            ]
+        ],
+        "session" => [
+            [
+                "stores" => [
+                    "redis01"
+                ]
+            ]
+        ],
+        "request" => []
+    ]
+];
+$CFG->alternative_cache_factory_class = 'tool_forcedcache_cache_factory';
