@@ -103,6 +103,24 @@ $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settin
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
 
+$contentimage = "";
+if (isset($PAGE->course->id)) {
+	$courseobj = new \core_course_list_element($PAGE->course);
+
+	foreach ($courseobj->get_course_overviewfiles() as $file) {
+		$isimage = $file->is_valid_image();
+		$url = \moodle_url::make_file_url("$CFG->wwwroot/pluginfile.php",
+		'/' . $file->get_contextid() . '/' . $file->get_component() . '/' .
+		$file->get_filearea() . $file->get_filepath() . $file->get_filename(), !$isimage);
+		if ($isimage) {
+			$contentimage = $url;
+      $string = '<img class="img-whp img-fluid mb30 summary-image" src="'. $url .'">';
+      $contentimagefiltered = format_text($string, FORMAT_MOODLE);
+			break;
+		}
+	}
+}
+
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
@@ -127,7 +145,8 @@ $templatecontext = [
     'enablecourseindex' => $themesettings->enablecourseindex,
     'addcontentblockbutton' => $addcontentblockbutton,
     'contentblocks' => $contentblocks,
-    'summary' => $PAGE->course->summary
+    'summary' => $PAGE->course->summary,
+    'contentimage' => $contentimagefiltered
 ];
 
 $templatecontext = array_merge($templatecontext, $themesettings->footer());
