@@ -83,10 +83,7 @@ $CFG->forced_plugin_settings['theme_moove'] = [
         'numbersfrontpage' => "0",
         'preset' => "default.scss",
         'presetfiles' => "",
-        'scss' => "
-.copyright, #page-footer .footer-columns{display: none;}
-#fitem_id_emailm, #id_moodle_picture, #id_moodle_additional_names, #id_moodle_interests, #id_moodle_optional, #fitem_id_description_editor, #id_timezone{display: none;}
-	",
+        'scss' => "",
         'scsspre' => "",
         'slidercap1' => "",
         'slidercount' => "0",

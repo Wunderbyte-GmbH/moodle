@@ -252,4 +252,6 @@ body.has-secondarynavigation #page.drawers {
 .dashboard-list-img {
 	height: 200px;
 }
+.copyright, #page-footer .footer-columns{display: none;}
+#fitem_id_emailm, #id_moodle_picture, #id_moodle_additional_names, #id_moodle_interests, #id_moodle_optional, #fitem_id_description_editor, #fitem_id_timezone{display: none;}
 
