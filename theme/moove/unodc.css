@@ -77,6 +77,10 @@ a,
     box-shadow: none !important;
 }
 
+.form-control {
+    height: auto;
+}
+
 .form-control,
 .custom-select {
 	border-radius: 0 !important;
@@ -128,6 +132,11 @@ a,
     -webkit-box-shadow: 0 0 50px 0 rgba(32,32,32,.15);
     -moz-box-shadow: 0 0 50px 0 rgba(32,32,32,.15);
     box-shadow: 0 0 50px 0 rgba(32,32,32,.15);
+}
+
+body.has-secondarynavigation #page, 
+body.has-secondarynavigation #page.drawers {
+    margin-top: 180px;
 }
 
 #page-site-index.notloggedin #topofscroll,
@@ -199,6 +208,10 @@ a,
     padding: 15px 30px;
 }
 
+#page-course-view-topics .summary-image {
+    max-width: 500px;
+}
+
 .activity-item:not(.activityinline) {
 	border: none !important; 
     padding: 0rem;
@@ -225,6 +238,10 @@ a,
     	flex: 0 0 41.66666667%;
     	max-width: 41.66666667%;
 	}
+    #page.drawers div[role="main"] {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
 }
 
 .card-img, 
@@ -235,3 +252,4 @@ a,
 .dashboard-list-img {
 	height: 200px;
 }
+
