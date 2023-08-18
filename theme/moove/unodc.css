@@ -1,0 +1,257 @@
+@font-face {
+  font-family: 'IBM Plex Sans';
+  src: url('/theme/moove/fonts/IBMPlexSans-Regular.ttf') format('truetype'),
+       url('/theme/moove/fonts/IBMPlexSans-Regular.woff') format('woff'),
+       url('/theme/moove/fonts/IBMPlexSans-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+body {
+	color: #333;
+	font-family: "IBM Plex Sans";
+	font-size: 17px;
+	background-color: #fff !important;
+}
+
+h1, h2, h3, h4 .h1, .h2, .h3, .h4 {
+    font-family: "IBM Plex Sans" !important;
+    font-weight: 600;
+    color: #006288;
+}
+
+/*h2::after, h3::after {
+    content: "";
+    height: 3px;
+    width: 54px;
+    min-width: 120px;
+    display: block;
+    background-color: #FF6E49;
+    margin: 0.25em auto;
+    overflow: hidden;
+}
+*/
+
+.btn {
+    box-shadow: none;
+    border-radius: 5px;
+    font-family: "IBM Plex Sans" !important;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
+    border: 0px;
+    padding: 14px 20px;
+}
+
+.btn-primary {
+	color: #fff;
+    background-color: #0091c9;
+    border-color: #0091c9;
+}
+
+.btn-link, 
+a,
+.page-link,
+.navbar-light .navbar-nav .show>.nav-link, 
+.navbar-light .navbar-nav .active>.nav-link, 
+.navbar-light .navbar-nav .nav-link.show, 
+.navbar-light .navbar-nav .nav-link.active {
+	color: #006288;
+}
+
+.page-item.active .page-link {
+    background-color: #006288;
+    border-color: #006288;
+}
+
+.aalink.focus, a.focus.autolink, 
+.aalink:focus, a.autolink:focus,
+ #page-footer a:not([class]).focus, 
+ #page-footer a:not([class]):focus, 
+ .arrow_link.focus, .arrow_link:focus, 
+ a:not([class]).focus, a:not([class]):focus, 
+ .activityinstance>a.focus, 
+ .activityinstance>a:focus {
+    outline: 0 solid transparent;
+    background-color: transparent;
+    box-shadow: none !important;
+}
+
+.form-control {
+    height: auto;
+}
+
+.form-control,
+.custom-select {
+	border-radius: 0 !important;
+    font-family: "IBM Plex Sans" !important;
+    color: #333 !important;
+    border-color: #8db5c7 !important;
+    line-height: initial;
+}
+
+.navbar.fixed-top {
+	background-color: #f2f2f2 !important;
+	border-bottom: 3px solid #FF6E49;
+}
+
+.navbar.fixed-top .primary-navigation .navigation .nav-link,
+.navbar.fixed-top .primary-navigation .navigation .nav-link.active {
+	border-bottom: none !important;
+	font-weight: 700;
+	color: #006288;
+}
+
+#usernavigation {
+	color: #FB6C48;
+    font-family: "IBM Plex Sans";
+    font-size: 15px;
+    font-weight: 600;
+    padding: 0;
+}
+
+#usernavigation a {
+	color: #FB6C48;
+}
+
+#usermenu-carousel a {
+	color: #002D3E;
+	font-size: 16px;
+	font-weight: 600;
+	padding: 0;
+}
+#usermenu-carousel a:hover {
+	color: #FF6E49;
+	background-color: transparent !important;
+}
+
+#user-action-menu {
+    border: none;
+    border-radius: 5px;
+    padding: 20px 30px;
+    -webkit-box-shadow: 0 0 50px 0 rgba(32,32,32,.15);
+    -moz-box-shadow: 0 0 50px 0 rgba(32,32,32,.15);
+    box-shadow: 0 0 50px 0 rgba(32,32,32,.15);
+}
+
+body.has-secondarynavigation #page, 
+body.has-secondarynavigation #page.drawers {
+    margin-top: 180px;
+}
+
+#page-site-index.notloggedin #topofscroll,
+#page-site-index.notloggedin #topofscroll #page-content, 
+#page-site-index.notloggedin #topofscroll #region-main {
+	background-color: #fff !important;
+}
+
+.pagelayout-login #page {
+	background:  #fff !important;
+    background-image: none !important);
+    background-repeat: none;
+}
+
+.navbar.fixed-top .navbar-brand .logo {
+	max-height: calc(50px - (0.25rem * 2));
+}
+
+.secondary-navigation {
+	background-color: #e4eff4 !important;
+	filter: none !important;
+}
+
+.secondary-navigation .moremenu .nav-tabs .nav-link {
+	font-family: "IBM Plex Sans";
+    font-size: 17px;
+    color: #006288;
+    line-height: 1;
+    font-weight: 600;
+}
+
+.secondary-navigation .moremenu .nav-tabs .nav-link:hover, 
+.secondary-navigation .moremenu .nav-tabs .nav-link:focus {
+    background-color: #006288;
+    color: #fff;
+}
+
+.secondary-navigation .moremenu .nav-tabs .nav-link.active {
+	border-bottom: none;
+}
+
+.moremenu .nav-link.active {
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom-color: transparent;
+    color: #006288;
+}
+
+.moremenu .nav-link:hover, 
+.moremenu .nav-link:focus,
+.moremenu .nav-link.active:focus, 
+.moremenu .nav-link.active:hover {
+    border-color: transparent;
+    background-color: transparent;
+}
+
+#page-login-index .login-container .loginform,
+.card {
+	-webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+#page-course-view-topics .course-content {
+	border: none;
+    border-radius: 0;
+    background-color: #E4EFF4;
+    margin-bottom: 30px;
+    padding: 15px 30px;
+}
+
+#page-course-view-topics .summary-image {
+    max-width: 500px;
+}
+
+.activity-item:not(.activityinline) {
+	border: none !important; 
+    padding: 0rem;
+}
+
+.course-contacts {
+	display: none;
+}
+
+.courseindex .courseindex-item {
+	border-radius: 0 !important;	
+}
+
+#page-user-edit .page-context-header {
+	display: none;
+}
+
+@media (min-width: 768px) {
+	#page-my-index .col-md-2 {
+    	flex: 0 0 33.333333%;
+    	max-width: 33.333333%;
+	}
+	#page-my-index .col-md-9 {
+    	flex: 0 0 41.66666667%;
+    	max-width: 41.66666667%;
+	}
+    #page.drawers div[role="main"] {
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+}
+
+.card-img, 
+.card-img-bottom {
+	border-radius: 0;
+}
+
+.dashboard-list-img {
+	height: 200px;
+}
+.copyright, #page-footer .footer-columns{display: none;}
+#fitem_id_emailm, #id_moodle_picture, #id_moodle_additional_names, #id_moodle_interests, #id_moodle_optional, #fitem_id_description_editor, #fitem_id_email, #fitem_id_timezone{display: none;}
+

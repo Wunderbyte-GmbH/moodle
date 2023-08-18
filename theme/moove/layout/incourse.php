@@ -70,7 +70,7 @@ if (!$courseindex) {
 }
 
 $forceblockdraweropen = $OUTPUT->firstview_fakeblocks();
-
+$coursesummary =
 $secondarynavigation = false;
 $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
