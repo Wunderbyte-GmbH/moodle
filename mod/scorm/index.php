@@ -30,7 +30,7 @@ if (!empty($id)) {
 }
 
 require_course_login($course);
-$PAGE->set_pagelayout('incourse');
+// $PAGE->set_pagelayout('incourse');
 
 // Trigger instances list viewed event.
 $event = \mod_scorm\event\course_module_instance_list_viewed::create(array('context' => context_course::instance($course->id)));

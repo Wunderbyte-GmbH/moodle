@@ -69,12 +69,6 @@ class core_renderer extends \theme_boost\output\core_renderer {
 
         $sitefont = isset($theme->settings->fontsite) ? $theme->settings->fontsite : 'Roboto';
 
-        $output .= '<link rel="preconnect" href="https://fonts.googleapis.com">
-                       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                       <link href="https://fonts.googleapis.com/css2?family='
-                        . $sitefont .
-                       ':ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">';
-
         return $output;
     }
 
@@ -418,6 +412,31 @@ class core_renderer extends \theme_boost\output\core_renderer {
      */
     public function get_navbar_callbacks_data() {
         $callbacks = get_plugins_with_function('moove_additional_header', 'lib.php');
+
+        if (!$callbacks) {
+            return '';
+        }
+
+        $output = '';
+
+        foreach ($callbacks as $plugins) {
+            foreach ($plugins as $pluginfunction) {
+                if (function_exists($pluginfunction)) {
+                    $output .= $pluginfunction();
+                }
+            }
+        }
+
+        return $output;
+    }
+
+    /**
+     * Returns plugins callback renderable data to be printed on navbar.
+     *
+     * @return string Final html code.
+     */
+    public function get_module_footer_callbacks_data() {
+        $callbacks = get_plugins_with_function('moove_module_footer', 'lib.php');
 
         if (!$callbacks) {
             return '';
