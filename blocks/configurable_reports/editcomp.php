@@ -58,7 +58,7 @@ if ($course->id == SITEID) {
 
 $PAGE->set_url('/blocks/configurable_reports/editreport.php', ['id' => $id, 'comp' => $comp]);
 $PAGE->set_context($context);
-$PAGE->set_pagelayout('incourse');
+// $PAGE->set_pagelayout('incourse');
 
 $PAGE->requires->js('/blocks/configurable_reports/js/configurable_reports.js');
 
