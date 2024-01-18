@@ -253,5 +253,13 @@ body.has-secondarynavigation #page.drawers {
 	height: 200px;
 }
 .copyright, #page-footer .footer-columns{display: none;}
-#fitem_id_emailm, #id_moodle_picture, #id_moodle_additional_names, #id_moodle_interests, #id_moodle_optional, #fitem_id_description_editor, #fitem_id_email, #fitem_id_timezone{display: none;}
+#fitem_id_emailm, #id_moodle_picture, #id_moodle_additional_names, #id_moodle_interests, #id_moodle_optional, #fitem_id_description_editor, #fitem_id_timezone{display: none;}
+
+.coursename {
+	font-size: 1.2rem !important;
+	font-weight: 800 !important;
+}
+#page-site-index .paging.paging-morelink a.btn {
+    display:none;
+}
 

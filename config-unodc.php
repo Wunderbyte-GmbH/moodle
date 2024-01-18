@@ -1,7 +1,4 @@
 <?php
-$CFG->guestloginbutton = 0;
-$CFG->verifychangedemail = false;
-$CFG->noemailever = true;
 $CFG->theme = "moove";
 $CFG->themedesignermode = "0";
 $CFG->allowthemechangeonurl = "1";
@@ -10,9 +7,14 @@ $CFG->authpreventaccountcreation = "0";
 $CFG->enrol_plugins_enabled = "manual,guest,self,cohort,autoenrol";
 $CFG->registerauth = "";
 $CFG->defaulthomepage = "1";
-$CFG->frontpage = "6";
-$CFG->frontpagecourselimit = "200";
-$CFG->frontpageloggedin = "6";
+$CFG->frontpage = "2,6";
+$CFG->frontpagecourselimit = "500";
+$CFG->frontpageloggedin = "2,5";
+$CFG->guestloginbutton = "0";
+$CFG->langmenu = "0";
+$CFG->passwordpolicy = 0;
+$CFG->noemailever = true;
+$CFG->verifychangedemail = false;
 $CFG->forced_plugin_settings['auth_none'] = [
         'field_lock_address' => "locked",
         'field_lock_alternatename' => "locked",
@@ -84,7 +86,8 @@ $CFG->forced_plugin_settings['theme_moove'] = [
         'numbersfrontpage' => "0",
         'preset' => "default.scss",
         'presetfiles' => "",
-        'scss' => "",
+	'scss' => "#page-footer .copyright, #page-user-edit #fitem_id_maildisplay, #page-user-edit #fitem_id_city {display: none !important;}
+",
         'scsspre' => "",
         'slidercap1' => "",
         'slidercount' => "0",
@@ -132,7 +135,7 @@ $CFG->forced_plugin_settings['tool_moodlenet'] = [
 ];
 
 $CFG->defaultpreference_maildisplay = "0";
-$CFG->country = "KE";
+//$CFG->country = "KE";
 $CFG->enabledashboard = "0";
 $CFG->minpassworddigits = "0";
 $CFG->minpasswordlength = "8";
