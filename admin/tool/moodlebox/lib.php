@@ -30,9 +30,6 @@ require_once($CFG->dirroot.'/admin/tool/moodlebox/forms.php');
 /**
  * Callback to add footer elements.
  *
- * @SuppressWarnings(PHPMD.LongVariable)
- * @SuppressWarnings(PHPMD.CyclomaticComplexity)
- *
  * @return string HTML footer content
  */
 function tool_moodlebox_before_footer() {
@@ -57,47 +54,46 @@ function tool_moodlebox_before_footer() {
     if (has_capability('tool/moodlebox:viewbuttonsinfooter', context_system::instance()) &&
             get_config('tool_moodlebox', 'datetimebuttonsinfooter')) {
 
-        // Display date and time setting buttons
-        $datetimetriggerfilename = $thisplugindir . '.set-server-datetime';
+        // Display date and time setting buttons.
+        $datetimetriggerfile = $thisplugindir . '.set-server-datetime';
         $datetimesetform = new datetimeset_form();
 
         if ($data = $datetimesetform->get_data()) {
             if (!empty($data->submitbutton)) {
                 $datecommand = "date +%s -s @$data->currentdatetime";
-                file_put_contents($datetimetriggerfilename, "#!/bin/sh\n" . $datecommand . "\nexit 0\n");
+                file_put_contents($datetimetriggerfile, "#!/bin/sh\n" . $datecommand . "\nexit 0\n");
                 \core\notification::warning(get_string('datetimemessage', 'tool_moodlebox'));
             }
         }
 
-        $output .= html_writer::empty_tag("hr", array('id' => 'datetimesetbuttonsspacer'));
-        $output .= html_writer::div($datetimesetform->render(), "", array('id' => 'datetimesetbuttons'));
+        $output .= html_writer::empty_tag("hr", ['id' => 'datetimesetbuttonsspacer']);
+        $output .= html_writer::div($datetimesetform->render(), "", ['id' => 'datetimesetbuttons']);
     }
 
     if (has_capability('tool/moodlebox:viewbuttonsinfooter', context_system::instance()) &&
             get_config('tool_moodlebox', 'restartshutdownbuttonsinfooter')) {
 
-        // Display restart and shutdown buttons
-        $reboottriggerfilename = $thisplugindir . '.reboot-server';
-        $shutdowntriggerfilename = $thisplugindir . '.shutdown-server';
-        $restartshutdownform = new restartshutdown_form(null, null, 'post', '', array('id' => 'formrestartstop'));
+        // Display restart and shutdown buttons.
+        $reboottriggerfile = $thisplugindir . '.reboot-server';
+        $shutdowntriggerfile = $thisplugindir . '.shutdown-server';
+        $restartshutdownform = new restartshutdown_form(null, null, 'post', '', ['id' => 'formrestartstop']);
 
         if ($data = $restartshutdownform->get_data()) {
             if (!empty($data->restartbutton)) {
-                file_put_contents($reboottriggerfilename, 'reboot');
+                file_put_contents($reboottriggerfile, 'reboot');
                 \core\notification::warning(get_string('restartmessage', 'tool_moodlebox'));
             }
             if (!empty($data->shutdownbutton)) {
-                file_put_contents($shutdowntriggerfilename, 'shutdown');
+                file_put_contents($shutdowntriggerfile, 'shutdown');
                 \core\notification::warning(get_string('shutdownmessage', 'tool_moodlebox'));
             }
         }
 
-        $output .= html_writer::empty_tag("hr", array('id' => 'footerbuttonsspacer'));
-        $output .= html_writer::div($restartshutdownform->render(), "", array('id' => 'footerbuttons'));
+        $output .= html_writer::empty_tag("hr", ['id' => 'footerbuttonsspacer']);
+        $output .= html_writer::div($restartshutdownform->render(), "", ['id' => 'footerbuttons']);
 
     }
 
     return $output;
-
 
 }

@@ -53,6 +53,10 @@ jobs:
             moodle-branch: 'MOODLE_402_STABLE'
             database: pgsql
             extensions: xmlrpc-beta
+          - php: '8.2'
+            moodle-branch: 'MOODLE_403_STABLE'
+            database: pgsql
+            extensions: xmlrpc-beta
 
     steps:
       - name: Check out repository code
@@ -131,7 +135,7 @@ jobs:
           moodle-plugin-ci phpunit
           cd moodle
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
-          vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter test_all_external_info
+          vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter "test_all_external_info@mod_coursecertificate.*"
           vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_test
 
       - name: Behat features

@@ -60,7 +60,7 @@ class helper_test extends advanced_testcase {
 
         // Create coursecertificate1 module without restrictions.
         $coursecertificate1 = $this->getDataGenerator()->create_module('coursecertificate', ['course' => $course->id,
-            'template' => $certificate1->get_id()]);
+            'template' => $certificate1->get_id(), ]);
         $cm1 = get_fast_modinfo($course)->instances['coursecertificate'][$coursecertificate1->id];
 
         // Check both users are retured.
@@ -78,12 +78,68 @@ class helper_test extends advanced_testcase {
         $futuredate = strtotime('+1year');
         $availabilityvalue = '{"op":"&","c":[{"type":"date","d":">=","t":' . $futuredate . '}],"showc":[true]}';
         $coursecertificate2 = $this->getDataGenerator()->create_module('coursecertificate', ['course' => $course->id,
-                'template' => $certificate1->get_id(), 'availability' => $availabilityvalue]);
+                'template' => $certificate1->get_id(), 'availability' => $availabilityvalue, ]);
         $cm2 = get_fast_modinfo($course)->instances['coursecertificate'][$coursecertificate2->id];
 
         // Check no user is returned.
         $users = \mod_coursecertificate\helper::get_users_to_issue($coursecertificate2, $cm2);
         $this->assertEmpty($users);
+    }
+
+    /**
+     * Users with multiple roles (student and teacher) should be returned only when they meet the availability criteria
+     *
+     * @return void
+     */
+    public function test_get_users_to_issue_multiple_roles(): void {
+        global $DB;
+
+        // Create course.
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => true]);
+        $page = $this->getDataGenerator()->create_module('page', ['course' => $course->id], ['completion' => 1]);
+        $pagecm = get_fast_modinfo($course)->cms[$page->cmid]->get_course_module_record();
+
+        // Create and enrol users. User3 has two roles - student and teacher.
+        $user1 = $this->getDataGenerator()->create_and_enrol($course, 'student');
+        $user2 = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $user3 = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        $studentrole = $DB->get_field('role', 'id', ['shortname' => 'student']);
+        $this->getDataGenerator()->role_assign($studentrole, $user3->id, \context_course::instance($course->id));
+
+        // Create certificate template.
+        $certificate1 = $this->get_certificate_generator()->create_template((object)['name' => 'Certificate 1']);
+
+        // Create coursecertificate module with availability restriciton of completing another module.
+        $availabilityvalue = '{"op":"&","showc":[true],"c":[{"type":"completion","cm":' . $page->cmid .
+            ',"e":' . COMPLETION_COMPLETE . '}]}';
+        $coursecertificate = $this->getDataGenerator()->create_module('coursecertificate', [
+            'course' => $course->id,
+            'template' => $certificate1->get_id(),
+            'availability' => $availabilityvalue,
+        ]);
+        $cm = get_fast_modinfo($course)->cms[$coursecertificate->cmid];
+
+        // No users completed $page activity, so no users are eligible for the certificate.
+        $users = \mod_coursecertificate\helper::get_users_to_issue($coursecertificate, $cm);
+        $this->assertEmpty($users);
+
+        // Complete $page activity as user1. Now this user is eligible for the certificate.
+        (new \completion_info($course))->update_state($pagecm, COMPLETION_COMPLETE, $user1->id);
+
+        $users = \mod_coursecertificate\helper::get_users_to_issue($coursecertificate, $cm);
+        $this->assertEquals([(object)['id' => $user1->id]], $users);
+
+        // Complete $page activity as user3. Now both users are eligible for the certificate.
+        (new \completion_info($course))->update_state($pagecm, COMPLETION_COMPLETE, $user3->id);
+
+        $users = \mod_coursecertificate\helper::get_users_to_issue($coursecertificate, $cm);
+        $this->assertEqualsCanonicalizing([(object)['id' => $user1->id], (object)['id' => $user3->id]], $users);
+
+        // Complete $page activity as user2. Since user2 doesn't have a student role, the user will not get a certificate.
+        (new \completion_info($course))->update_state($pagecm, COMPLETION_COMPLETE, $user2->id);
+
+        $users = \mod_coursecertificate\helper::get_users_to_issue($coursecertificate, $cm);
+        $this->assertEqualsCanonicalizing([(object)['id' => $user1->id], (object)['id' => $user3->id]], $users);
     }
 
     /**
@@ -96,7 +152,7 @@ class helper_test extends advanced_testcase {
 
         // Create course with completion self enabled.
         $course = $this->getDataGenerator()->create_course(['shortname' => 'C01', 'fullname' => 'Course 01',
-            'enablecompletion' => COMPLETION_ENABLED, 'customfield_f1' => 'some text']);
+            'enablecompletion' => COMPLETION_ENABLED, 'customfield_f1' => 'some text', ]);
         $criteriadata = new \stdClass();
         $criteriadata->id = $course->id;
         $criteriadata->criteria_self = COMPLETION_CRITERIA_TYPE_SELF;
@@ -111,7 +167,7 @@ class helper_test extends advanced_testcase {
         // Set user grade to 10.00.
         $assign = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
         $gradeitem2 = \grade_item::fetch(['itemtype' => 'mod', 'itemmodule' => 'assign', 'iteminstance' => $assign->id,
-            'courseid' => $course->id]);
+            'courseid' => $course->id, ]);
         $gradeitem2->update_final_grade($user->id, 10, 'gradebook');
 
         // Complete the course.

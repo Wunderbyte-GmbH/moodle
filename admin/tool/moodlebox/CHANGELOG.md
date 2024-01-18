@@ -3,6 +3,70 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/) and follow principles of [keep a changelog](https://keepachangelog.com).
 
+## Version 2.17.4, 2024-01-02
+
+### Changed
+- Remove deprecated strings (issue #129).
+- Update several strings (no issue number, commits 131fa61, a778c32 and 5f0112a).
+
+### Fixed
+- Fix deprecation warning in function `get_connected_ip_adresses()` (issue #130).
+
+## Version 2.17.3, 2023-12-24
+
+### Changed
+- New code for displaying the wireless clients info, which is now immediately updated upon client connexion; the info displayed is now the IP address and MAC address of the client, and the client name isn't displayed anymore (issue #128).
+
+## Version 2.17.2, 2023-11-28
+
+### Add
+- New code added to workaround a bug with wifi protocol on RPi3B (issue https://github.com/moodlebox/moodlebox/issues/319).
+
+### Fixed
+- Rename wrong filename in script and add routine to fix the buggy filename on devices (issue #127).
+
+## Version 2.17.1, 2023-10-05
+
+### Fixed
+- Fix bad branch name in supported version (issue #125).
+
+## Version 2.17.0, 2023-10-01
+
+### Add
+- Add support of NetworkManager for upcoming Bookworm-based RPi OS version (PR #123).
+- Add detection of just announced new Raspberry Pi 5 (issue #122).
+
+### Changed
+- Tested against upcoming Moodle 4.3 (issue #124).
+- Better implementation of MoodleBox settings at top level of administration navigation (see #115, commit b4c94dc).
+
+### Fixed
+- Fix completely script to work with released versions of MoodleBox image (issue #114).
+- Prevent more PHPDocs errors (no issue number, commits dd38ff0, 9915274 and 04aaf38).
+
+## Version 2.16.3, 2023-09-17
+
+### Fixed
+- Fix script to work with released versions of MoodleBox image (issue #114).
+- Multiple PHPDocs warnings for deprecated syntax (issue #121).
+
+## Version 2.16.2, 2023-09-16
+
+### Fixed
+- CPU load formatting problem in MoodleBox dashboard (issue #119).
+- Multiple issues with PHPDocs in plugin validation (issue #120).
+
+## Version 2.16.1, 2023-08-24
+
+### Changed
+- Update routine to check registration country (no issue number, commits  (no issue number, commit bdb9ab7 and ae25ffa).
+- Add function to get MoodleBox version and date (no issue number, commit 3ee5edd).
+- Update dependencies (no issue number, commit 496a1f4).
+
+### Fixed
+- Workaround potential execution permission (issue #118).
+- Fix coding style issues (no issue number, commit 1d33e7a).
+
 ## Version 2.16.0, 2023-07-30
 
 ### Add

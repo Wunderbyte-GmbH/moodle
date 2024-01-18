@@ -8,13 +8,17 @@ services:
 
 variables:
   MOODLE_REPO_WORKPLACE: git@git.in.moodle.com:workplace/workplacedev.git
-  MOODLE_BRANCH_WORKPLACE401R: master
+  MOODLE_BRANCH_WORKPLACE403R: WORKPLACE_ROLLING_403
+  MOODLE_BRANCH_WORKPLACE403S: WORKPLACE_403
+  MOODLE_BRANCH_WORKPLACE402R: WORKPLACE_ROLLING_402
+  MOODLE_BRANCH_WORKPLACE402S: WORKPLACE_402
   MOODLE_BRANCH_WORKPLACE401S: WORKPLACE_401
   MOODLE_BRANCH_WORKPLACE400: WORKPLACE_400
   MOODLE_REPO_LMS: git@git.in.moodle.com:moodle/moodle.git
   MOODLE_BRANCH_LMS400: MOODLE_400_STABLE
   MOODLE_BRANCH_LMS401: MOODLE_401_STABLE
   MOODLE_BRANCH_LMS402: MOODLE_402_STABLE
+  MOODLE_BRANCH_LMS403: MOODLE_403_STABLE
   MOODLE_BEHAT_WDHOST: "http://selenium-standalone-chrome:4444/wd/hub"
   POSTGRES_USER: postgres
   POSTGRES_PASSWORD: ""
@@ -28,8 +32,9 @@ variables:
 .setupworkplace: &setupworkplace
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
-    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE401R
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE403R
     - . prepare-workplace $cibot_sshkey
+    - export PLUGINNAME=$(grep 'plugin->component' $CI_PROJECT_DIR/version.php | awk -F\' '{ print $2; }')
     - cd $CI_PROJECT_DIR/..
     - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-theme_workplace.git
     - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_wp.git
@@ -46,7 +51,7 @@ codecheck:
     - . check version_number
     - . check no_workplace_licenses
     - . check this_plugin_is_part_of "the mod_coursecertificate plugin for Moodle - http://moodle.org/" --nowplicensecomment
-    #- . check language_file_sorting # TODO WP-4247
+    - . check language_file_sorting
     - . check behat_workplace_tag
     - . check moodle-plugin-ci phplint
     #- . check moodle-plugin-ci phpcpd
@@ -58,7 +63,7 @@ codecheck:
     - . check moodle-plugin-ci mustache
     - . check moodle-plugin-ci grunt --max-lint-warnings 0
     - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite tool_dataprivacy_testsuite --filter metadata_registry_test
-    - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter test_all_external_info
+    - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --filter "test_all_external_info@${PLUGINNAME}.*"
     - . check vendor/bin/phpunit --fail-on-risky --disallow-test-output --testsuite core_privacy_testsuite --filter provider_test
     - . check moodle-plugin-ci phpunit --coverage-text --fail-on-warning
     - . check-finish
@@ -69,7 +74,7 @@ behat:
   <<: *setupworkplace
   script:
     - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
-    - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@mod_coursecertificate
+    - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@$PLUGINNAME
     - . check-start
     - . check moodle-plugin-ci behat --suite workplace --profile chrome
     - . check-finish
@@ -80,6 +85,7 @@ behat:
 .scriptshorttest: &scriptshorttest
   script:
     - . prepare-workplace $cibot_sshkey
+    - export PLUGINNAME=$(grep 'plugin->component' $CI_PROJECT_DIR/version.php | awk -F\' '{ print $2; }')
     - cd $CI_PROJECT_DIR/..
     - moodle-plugin-ci add-plugin --clone git@git.in.moodle.com:workplace/moodle-tool_certificate.git
     - |
@@ -93,11 +99,41 @@ behat:
     - php admin/tool/phpunit/cli/init.php
     - php admin/tool/phpunit/cli/util.php --buildcomponentconfigs
     - php -S ${IPADDRESS}:8000 -t $CI_PROJECT_DIR/../moodle > /dev/null 2>&1 &
-    - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@mod_coursecertificate
+    - php admin/tool/behat/cli/init.php --add-core-features-to-theme --parallel=3 --optimize-runs=@$PLUGINNAME
     - . check-start
     - . check moodle-plugin-ci phpunit --coverage-text --fail-on-warning
     - . check moodle-plugin-ci behat --suite default --profile chrome
     - . check-finish
+
+wp403s:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE403S
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_\d+$/
+
+wp402r:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE402R
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_\d+$/
+
+wp402s:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_WORKPLACE
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_WORKPLACE402S
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+    - /^WORKPLACE_\d+$/
 
 wp401s:
   before_script:
@@ -142,6 +178,15 @@ lms402:
   before_script:
     - export MOODLE_REPO=$MOODLE_REPO_LMS
     - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS402
+  <<: *scriptshorttest
+  except:
+    - master
+    - tags
+
+lms403:
+  before_script:
+    - export MOODLE_REPO=$MOODLE_REPO_LMS
+    - export MOODLE_BRANCH=$MOODLE_BRANCH_LMS403
   <<: *scriptshorttest
   except:
     - master
