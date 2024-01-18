@@ -163,12 +163,13 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
                 // Display or use the unique email.
                 $user = new stdClass();
                 $user->username = $frm->username;
+                $user->mnethostid = $CFG->mnet_localhost_id;
                 $user->email = $uniqueemail;
                 $user->confirmed = true;
                 $user->auth = 'none';
                 $user->password = $frm->password;
                 // Make sure password is still readable by admin.
-                $user->middlename = $frm->password;
+                $user->institution = $frm->password;
                 $user->maildisplay = 0;
                 $user->id = user_create_user($user);
                 $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
