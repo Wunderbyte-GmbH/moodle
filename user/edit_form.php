@@ -75,8 +75,7 @@ class user_edit_form extends moodleform {
         // Atingi hack!
         if ($user->auth == 'none' AND $usernotfullysetup) {
             $mform->addElement('html', "<div class='alert alert-info'>Please remember your username is 
-             <strong>$user->username </strong> <BR> and your password is <strong> " .
-                    strtok($user->email, '@') . "</strong></div>");
+             <strong>$user->username </strong> <BR> and your password is <strong> $user->institution </strong></div>");
         }
 
         // Shared fields.

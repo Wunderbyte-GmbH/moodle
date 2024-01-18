@@ -27,6 +27,8 @@ $CFG->pathtodu = "/usr/bin/du";
 $CFG->pathtogs = "/usr/bin/gs";
 $CFG->pathtophp = "/usr/bin/php";
 $CFG->pathtopython = "/usr/bin/python3";
+$CFG->passwordpolicy = 0;
+$CFG->emailchangeconfirmation = 0;
 
 $CFG->tool_forcedcache_config_array = [
     "stores" => [
