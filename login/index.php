@@ -147,28 +147,35 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         }
     }
 
-    if ($user) {
-        // The auth plugin has already provided the user via the loginpage_hook() called above.
-    } else if (($frm->username == 'guest') and empty($CFG->guestloginbutton)) {
+    if (!$user && $frm->username === 'guest' && empty($CFG->guestloginbutton)) {
         $user = false;    /// Can't log in as guest if guest button is disabled
         $frm = false;
     } else {
         if (empty($errormsg)) {
-            $logintoken = isset($frm->logintoken) ? $frm->logintoken : '';
-            if ($DB->record_exists('user', [username => $frm->username])) {
+            $logintoken = $frm->logintoken ?? '';
+            if ($DB->record_exists('user', ['username' => $frm->username])) {
                 $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
             } else {
+                $basedomain = "@example.com";
+                // Generate a unique email using timestamp.
+                $randomstring = str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT);
+                $uniqueemail = $randomstring . time() . $basedomain;
+                // Display or use the unique email.
                 $user = new stdClass();
                 $user->username = $frm->username;
-                $user->email = "{$frm->password}@example.com";
+                $user->email = $uniqueemail;
                 $user->confirmed = true;
                 $user->auth = 'none';
                 $user->password = $frm->password;
+                // Make sure password is still readable by admin.
+                $user->middlename = $frm->password;
                 $user->maildisplay = 0;
                 $user->id = user_create_user($user);
                 $user = authenticate_user_login($frm->username, $frm->password, false, $errorcode, $logintoken);
-                $user->email = "{$frm->password}@example.com";
-                $user->maildisplay = 0;
+                if ($user) {
+                    $user->email = $uniqueemail;
+                    $user->maildisplay = 0;
+                }
             }
         }
     }

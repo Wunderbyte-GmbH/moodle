@@ -171,7 +171,11 @@ $filemanageroptions = array('maxbytes'       => $CFG->maxbytes,
 file_prepare_draft_area($draftitemid, $filemanagercontext->id, 'user', 'newicon', 0, $filemanageroptions);
 $user->imagefile = $draftitemid;
 if (empty($user->email)) {
-    $user->email = "{$frm->password}@example.com";
+    $basedomain = "@example.com";
+    // Generate a unique email using timestamp.
+    $randomstring = str_pad(mt_rand(0, 999), 3, '0', STR_PAD_LEFT);
+    $uniqueemail = $randomstring . time() . $basedomain;
+    $user->email = $uniqueemail;
 }
 // Create form.
 $userform = new user_edit_form(new moodle_url($PAGE->url, array('returnto' => $returnto)), array(
