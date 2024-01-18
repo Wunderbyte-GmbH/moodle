@@ -39,7 +39,7 @@ $string['datetimeset'] = 'Set date and time';
 $string['datetimesetmessage'] = 'The clock of the MoodleBox isn\'t on time. It\'s highly recommended to set the date and time to the current time.';
 $string['datetimesetting'] = 'Date and time';
 $string['defaultgateway'] = 'Default gateway';
-$string['dhcpclientinfo'] = 'Client IP address and name';
+$string['dhcpclientinfo'] = 'Client IP and MAC addresses';
 $string['dhcpclientnumber'] = 'number of clients';
 $string['dhcpclients'] = 'DHCP clients';
 $string['documentation'] = 'MoodleBox documentation';
@@ -64,7 +64,7 @@ $string['moodleboxsysteminfo_help'] = 'The MoodleBox information dashboard displ
 
 * Critical MoodleBox operation details, such as remaining disk space on the SD card and processor load, temperature and frequency
 * Current settings of Wi-Fi network supplied by the MoodleBox
-* Number, IP address and name of all devices connected to the MoodleBox
+* Number, IP and MAC addresses of all devices connected to the MoodleBox
 * Raspberry Pi model and operating system
 * MoodleBox version and MoodleBox plugin version
 ';
@@ -104,6 +104,8 @@ $string['rpi4onegb'] = 'Raspberry Pi 4B (1GB RAM)';
 $string['rpi4twogb'] = 'Raspberry Pi 4B (2GB RAM)';
 $string['rpi4fourgb'] = 'Raspberry Pi 4B (4GB RAM)';
 $string['rpi4eightgb'] = 'Raspberry Pi 4B (8GB RAM)';
+$string['rpi5fourgb'] = 'Raspberry Pi 5 (4GB RAM)';
+$string['rpi5eightgb'] = 'Raspberry Pi 5 (8GB RAM)';
 $string['rpiosversion'] = 'Raspberry Pi OS version';
 $string['rpizero2w'] = 'Raspberry Pi Zero 2 W';
 $string['rpizerow'] = 'Raspberry Pi Zero W';
@@ -119,9 +121,9 @@ $string['staticipaddress'] = 'IP address (static)';
 $string['staticipaddress_help'] = 'This is the static IP address of the MoodleBox Wi-Fi access point. It also defines the DHCP range of IP addresses given to Wi-Fi clients. It must be a valid <strong>private</strong> IP address, e.g. "10.10.1.1", "172.23.222.1" or "192.168.222.1". Its last segment will be forced to 1.';
 $string['staticipaddressinvalid'] = 'This IP address is invalid. It must be a valid <strong>private</strong> IP address, e.g. "10.10.1.1", "172.23.222.1" or "192.168.222.1".';
 $string['systeminfo'] = 'System information';
-$string['undervoltagedetected'] = '<p><b>Warning: under-voltage detected!</b> The power supply of the MoodleBox is inadequate, which can cause various problems, for example a limitation of the number of Wi-Fi clients or even an unexpected shutdown of the device.</p><p>It is strongly recommended to <b>change your power supply</b>, giving preference to the official <a href="https://www.raspberrypi.com/products/micro-usb-power-supply/" target="_blank">Raspberry Pi 12.5W Micro USB Power Supply</a> for Raspberry Pi 3A+, 3B, 3B+, Zero W and Zero 2 W, or <a href="https://www.raspberrypi.com/products/type-c-power-supply/" target="_blank">Raspberry Pi 15W USB-C Power Supply</a> for Raspberry Pi 4B.</p>';
-$string['undervoltageoccurred'] = '<p>An under-voltage situation has occurred since last boot of the MoodleBox. This could indicate the power supply of the MoodleBox is inadequate, which can cause various problems, for example a limitation of the number of Wi-Fi clients or even an unexpected shutdown of the device.</p><p>It is strongly recommended to <b>change your power supply</b>, giving preference to the official <a href="https://www.raspberrypi.com/products/micro-usb-power-supply/" target="_blank">Raspberry Pi 12.5W Micro USB Power Supply</a> for Raspberry Pi 3A+, 3B, 3B+, Zero W and Zero 2 W, or <a href="https://www.raspberrypi.com/products/type-c-power-supply/" target="_blank">Raspberry Pi 15W USB-C Power Supply</a> for Raspberry Pi 4B.</p>';
-$string['unknownmodel'] = 'Unknown Raspberry Pi model';
+$string['undervoltagedetected'] = '<p><b>Warning: under-voltage detected!</b> The power supply of the MoodleBox is inadequate, which can cause various problems, for example a limitation of the number of Wi-Fi clients or even an unexpected shutdown of the device.</p><p>It is strongly recommended to <b>change your power supply</b>, giving preference to the official <a href="https://www.raspberrypi.com/products/micro-usb-power-supply/" target="_blank">Raspberry Pi 12.5W Micro USB Power Supply</a> for Raspberry Pi 3A+, 3B, 3B+ and Zero 2 W, or <a href="https://www.raspberrypi.com/products/type-c-power-supply/" target="_blank">Raspberry Pi 15W USB-C Power Supply</a> for Raspberry Pi 4B, or <a href="https://www.raspberrypi.com/products/27w-power-supply/" target="_blank">Raspberry Pi 27W USB-C Power Supply</a> for Raspberry Pi 5.</p>';
+$string['undervoltageoccurred'] = '<p>An under-voltage situation has occurred since last boot of the MoodleBox. This could indicate the power supply of the MoodleBox is inadequate, which can cause various problems, for example a limitation of the number of Wi-Fi clients or even an unexpected shutdown of the device.</p><p>It is strongly recommended to <b>change your power supply</b>, giving preference to the official <a href="https://www.raspberrypi.com/products/micro-usb-power-supply/" target="_blank">Raspberry Pi 12.5W Micro USB Power Supply</a> for Raspberry Pi 3A+, 3B, 3B+ and Zero 2 W, or <a href="https://www.raspberrypi.com/products/type-c-power-supply/" target="_blank">Raspberry Pi 15W USB-C Power Supply</a> for Raspberry Pi 4B, or <a href="https://www.raspberrypi.com/products/27w-power-supply/" target="_blank">Raspberry Pi 27W USB-C Power Supply</a> for Raspberry Pi 5.</p>';
+$string['unknownmodel'] = 'Unknown or unsupported Raspberry Pi model';
 $string['unsupportedhardware'] = 'Unsupported server hardware detected! This plugin does only work on Raspberry Pi';
 $string['uptime'] = 'System uptime';
 $string['version'] = 'MoodleBox version';
@@ -146,8 +148,6 @@ $string['wifissidhiddenstate_help'] = 'If enabled, Wi-Fi SSID will be hidden fro
 $string['wifissidinvalid'] = 'The name of the Wi-Fi network (SSID) provided is invalid. It must be a string of at least 1 byte and at most 32 bytes.';
 
 // Deprecated.
-$string['badpowersupply'] = '<p><b>Warning: under-voltage detected!</b> The power supply of the MoodleBox is inadequate, which can cause various problems, for example a limitation of the number of Wi-Fi clients or even an unexpected shutdown of the device.</p><p>It is strongly recommended to <b>change the power supply</b>, giving preference to the <a href="https://www.raspberrypi.org/products/raspberry-pi-universal-power-supply/" target="_blank">official Raspberry Foundation power supply</a>, and to use a good quality cable to connect it with the MoodleBox.</p>';
 $string['ipaddress'] = 'IP address';
-$string['raspbianversion'] = 'Raspbian version';
 $string['showbuttonsinfooter'] = 'Show restart and shutdown buttons in footer';
 $string['showbuttonsinfooter_desc'] = 'If enabled, the restart and shutdown buttons are displayed in the footer of all pages of the site when logged in as an administrator or as a manager.';

@@ -1,5 +1,32 @@
 # Changelog
 
+## 4.3.2 - 2023-12-28
+### Added
+- When creating a link for LinkedIn allow to choose whether it's a link to
+  the certificate verification page or the certificate PDF itself.
+
+## 4.3 - 2023-11-09
+### Added
+- Testing on Workplace 4.3
+- Added missing SVG icons
+### Changed
+- Coding style fixes
+
+## 4.2.3 - 2023-10-10
+### Changed
+- Coding style fixes
+- Included LMS 4.3 and PHP 8.2 in the GHA testing matrix
+
+## 4.2.2 - 2023-08-22
+### Changed
+- Reportbuilder source "Certificate issues" no longer automatically checks
+  current user permission to access the certificate templates. The similar
+  manual condition was added in the upgrade script to all existing reports
+  to prevent change in behaviour. New reports will not have this condition.
+
+  This allows to create reports such as "My certificates" visible to any
+  users including those who can not view or edit the templates.
+
 ## 4.2 - 2023-05-30
 ### Changed
 - Removed strings: entitycertificateissues, errornopermissionissuecertificate, expires,
