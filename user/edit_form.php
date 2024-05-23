@@ -72,6 +72,12 @@ class user_edit_form extends moodleform {
 
         // Print the required moodle fields first.
         $mform->addElement('header', 'moodle', $strgeneral);
+        // Atingi hack!
+        if ($user->auth == 'none' AND $usernotfullysetup) {
+            $mform->addElement('html', "<div class='alert alert-info'>Please remember your username 
+            ( <strong> $user->username </strong> ) and password. If you forgot your password ask the atingibox consultant
+            to reset it.</div>");
+        }
 
         // Shared fields.
         useredit_shared_definition($mform, $editoroptions, $filemanageroptions, $user);
@@ -101,11 +107,13 @@ class user_edit_form extends moodleform {
             $mform->insertElementBefore($imagefile, 'userpicturewarning');
         }
 
+
+
         // Next the customisable profile fields.
         profile_definition($mform, $userid);
 
         $this->add_action_buttons(true, get_string('updatemyprofile'));
-
+        // atingibox customization
         $this->set_data($user);
     }
 
@@ -241,5 +249,3 @@ class user_edit_form extends moodleform {
         return $errors;
     }
 }
-
-
