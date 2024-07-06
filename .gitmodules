@@ -1,0 +1,94 @@
+[submodule "auth/campusconnect"]
+	path = auth/campusconnect
+	url = git@github.com:Wunderbyte-GmbH/moodle_auth_campusconnect.git
+[submodule "blocks/campusconnect"]
+	path = blocks/campusconnect
+	url = git@github.com:Wunderbyte-GmbH/moodle_block_campusconnect.git
+[submodule "enrol/campusconnect"]
+	path = enrol/campusconnect
+	url = git@github.com:Wunderbyte-GmbH/moodle_enrol_campusconnect.git
+[submodule "local/campusconnect"]
+	path = local/campusconnect
+	url = git@github.com:Wunderbyte-GmbH/moodle_local_campusconnect.git
+[submodule "admin/tool/certificate"]
+	path = admin/tool/certificate
+	url = git@github.com:moodleworkplace/moodle-tool_certificate.git
+[submodule "auth/saml2"]
+	path = auth/saml2
+	url = git@github.com:catalyst/moodle-auth_saml2.git
+[submodule "filter/multilang2"]
+	path = filter/multilang2
+	url = https://github.com/iarenaza/moodle-filter_multilang2.git
+[submodule "filter/shortcodes"]
+	path = filter/shortcodes
+	url = git@github.com:branchup/moodle-filter_shortcodes.git
+[submodule "local/musi"]
+	path = local/musi
+	url = git@github.com:Wunderbyte-GmbH/local_musi.git
+[submodule "local/wb_reports"]
+	path = local/wb_reports
+	url = git@github.com:Wunderbyte-GmbH/moodle-local_wb_reports.git
+[submodule "local/wunderbyte_table"]
+	path = local/wunderbyte_table
+	url = git@github.com:Wunderbyte-GmbH/moodle-local_wunderbyte_table.git
+[submodule "mod/coursecertificate"]
+	path = mod/coursecertificate
+	url = git@github.com:moodleworkplace/moodle-mod_coursecertificate.git
+[submodule "mod/mooduell"]
+	path = mod/mooduell
+	url = git@github.com:Wunderbyte-GmbH/moodle-mod_mooduell.git
+[submodule "moodle-browser-config"]
+	path = moodle-browser-config
+	url = https://github.com/andrewnicols/moodle-browser-config
+[submodule "user/profile/field/conditional"]
+	path = user/profile/field/conditional
+	url = git@github.com:rezaies/moodle-profilefield_conditional.git
+[submodule "user/profile/field/remotevalidation"]
+	path = user/profile/field/remotevalidation
+	url = git@github.com:Wunderbyte-GmbH/moodle_profilefield_remotevalidation.git
+[submodule "mod/booking"]
+	path = mod/booking
+	url = git@github.com:Wunderbyte-GmbH/moodle-mod_booking.git
+[submodule "blocks/booking"]
+	path = blocks/booking
+	url = git@github.com:Wunderbyte-GmbH/moodle-block_booking.git
+[submodule "blocks/userprofile_update"]
+	path = blocks/userprofile_update
+	url = git@github.com:Wunderbyte-GmbH/moodle-block_userprofile_update.git
+[submodule "course/format/tiles"]
+	path = course/format/tiles
+	url = https://bitbucket.org/dw8/moodle-format_tiles.git
+[submodule "enrol/autoenrol"]
+	path = enrol/autoenrol
+	url = git@github.com:bobopinna/moodle-enrol_autoenrol.git
+[submodule "local/entities"]
+	path = local/entities
+	url = git@github.com:Wunderbyte-GmbH/moodle-local_entities.git
+[submodule "local/remote_backup_provider"]
+	path = local/remote_backup_provider
+	url = git@github.com:Wunderbyte-GmbH/moodle-local_remote_backup_provider.git
+[submodule "local/shopping_cart"]
+	path = local/shopping_cart
+	url = git@github.com:Wunderbyte-GmbH/moodle-local_shopping_cart.git
+        branch = USI
+[submodule "mod/datalynx"]
+	path = mod/datalynx
+	url = git@github.com:Wunderbyte-GmbH/moodle-mod_datalynx.git
+[submodule "mod/datalynxcoursepage"]
+	path = mod/datalynxcoursepage
+	url = git@github.com:Wunderbyte-GmbH/moodle-mod_datalynxcoursepage.git
+[submodule "mod/subcourse"]
+	path = mod/subcourse
+	url = git@github.com:catalyst/moodle-mod_subcourse.git
+[submodule "theme/moove"]
+	path = theme/moove
+	url = https://github.com/willianmano/moodle-theme_moove.git
+[submodule "mod/newsletter"]
+	path = mod/newsletter
+	url = git@github.com:Wunderbyte-GmbH/moodle-mod_newsletter.git
+[submodule "local/export_api"]
+	path = local/export_api
+	url = git@github.com:Wunderbyte-GmbH/moodle-local_export_api.git
+[submodule "local/usersynccsv"]
+	path = local/usersynccsv
+	url = git@github.com:Wunderbyte-GmbH/moodle-local_usersynccsv.git

@@ -15,33 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The Main Manager tasks.
+ * Access file for profilefield_calculated.
  *
- * @package    tool_messageinbound
- * @copyright  2014 Andrew Nicols
+ * @package    profilefield_calculated
+ * @copyright  2016 onwards Antonello Moro {@link http://treagles.it}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-$tasks = array(
-    array(
-        'classname' => '\tool_messageinbound\task\pickup_task',
-        'blocking' => 0,
-        'minute' => '*',
-        'hour' => '*',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*'
-    ),
-
-    array(
-        'classname' => '\tool_messageinbound\task\cleanup_task',
-        'blocking' => 0,
-        'minute' => '55',
-        'hour' => '1',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*'
-    ),
+// Specific capability (requires knowing db and sql).
+$capabilities = array(
+    'profilefield/calculated:caneditsql' => array(
+        'riskbitmask'  => RISK_CONFIG,
+        'captype'      => 'write',
+        'contextlevel' => CONTEXT_SYSTEM
+    )
 );

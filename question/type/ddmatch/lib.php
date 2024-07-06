@@ -15,24 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Subplugin info class.
+ * Serve question type files
  *
- * @package   mod_workshop
- * @copyright 2013 Petr Skoda {@link http://skodak.org}
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package qtype_ddmatch
+ * 
+ * @author DualCube <admin@dualcube.com>
+ * @copyright  2007 DualCube (https://dualcube.com) 
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace mod_workshop\plugininfo;
-
-use core\plugininfo\base;
 
 defined('MOODLE_INTERNAL') || die();
 
-
-class workshopallocation extends base {
-    public function is_uninstall_allowed() {
-        if ($this->is_standard()) {
-            return false;
-        }
-        return true;
-    }
+function qtype_ddmatch_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()) {
+    global $CFG;
+    require_once($CFG->libdir . '/questionlib.php');
+    question_pluginfile($course, $context, 'qtype_ddmatch', $filearea, $args, $forcedownload, $options);
 }

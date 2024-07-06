@@ -128,7 +128,8 @@ class tool_task_renderer extends plugin_renderer_base {
                 $faildelaycell->attributes['class'] = 'table-danger';
             }
 
-            $row = new html_table_row([
+            try {
+                $row = new html_table_row([
                         $namecell,
                         new html_table_cell($this->component_name($task->get_component())),
                         new html_table_cell($editlink),
@@ -141,7 +142,15 @@ class tool_task_renderer extends plugin_renderer_base {
                         $this->time_cell($task->get_day_of_week(), $defaulttask->get_day_of_week()),
                         $this->time_cell($task->get_month(), $defaulttask->get_month()),
                         $faildelaycell,
-                        new html_table_cell($customised)]);
+                        new html_table_cell($customised)
+                ]);
+            } catch (Throwable $e) {
+                // Handle the exception, for example by logging the error or showing a message
+                error_log('Error creating table row: ' . $e->getMessage());
+                // Optionally, you can throw the exception again or return a fallback value
+                throw $e; // or return null; or continue execution based on your logic
+            }
+
 
             $classes = [];
             if (!$task->is_enabled()) {
