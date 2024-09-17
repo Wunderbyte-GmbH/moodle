@@ -2540,12 +2540,42 @@ class backup_questions_structure_step extends backup_structure_step {
 
         $questionverion->set_source_table('question_versions', ['questionbankentryid' => backup::VAR_PARENTID]);
 
-        $question->set_source_sql('
-                SELECT q.*
+
+        // Limit question that are included in backup: Custom development by Wunderbyte start.
+        $sql = "SELECT q.*
                  FROM {question} q
                  JOIN {question_versions} qv ON qv.questionid = q.id
                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                WHERE qv.id = ?', [backup::VAR_PARENTID]);
+                 JOIN {question_categories} qc ON qc.id=qbe.questioncategoryid
+                 WHERE qv.id = : qv AND qc.contextid IN (
+                            SELECT c.id
+                               FROM {context} c
+                               WHERE c.contextlevel=50
+                               AND c.instanceid = :courseid1
+                         )
+                         OR q.id IN (
+                         
+                            SELECT DISTINCT(qbv.questionid)
+                               FROM {quiz_slots} qs
+                               JOIN {question_references} qr ON qr.itemid = qs.slot
+                               JOIN {question_versions} qbv ON qbv.questionbankentryid = qr.questionbankentryid
+                               WHERE qr.component LIKE 'mod_quiz' AND qr.questionarea LIKE 'slot'
+                               AND qs.quizid IN (
+                                  SELECT cm.instance
+                                     FROM {course_modules} cm
+                                     JOIN {modules} m ON cm.module = m.id
+                                     WHERE cm.course=:courseid2 and m.name = 'quiz'
+                               )
+                        )";
+
+        $params = [
+                'courseid1' => backup::VAR_COURSEID,
+                'courseid2' => backup::VAR_COURSEID,
+                'qv' => backup::VAR_PARENTID,
+        ];
+
+        $question->set_source_sql($sql, $params);
+        // Custom development Wunderbyte end.
 
         $qhint->set_source_sql('
                 SELECT *
