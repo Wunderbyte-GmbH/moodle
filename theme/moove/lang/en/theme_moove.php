@@ -32,7 +32,10 @@ $string['currentinparentheses'] = '(current)';
 $string['region-side-pre'] = 'Right';
 $string['prev_section'] = 'Previous section';
 $string['next_section'] = 'Next section';
-$string['themedevelopedby'] = 'This theme was developed by';
+$string['themedevelopedby'] = 'This theme was proudly developed by';
+$string['themedevelopedbyconectimepartner'] = 'a Brazilian Moodle Partner Company.';
+$string['needsupport'] = 'Need support for your Moodle site? ';
+$string['pleasuretohelp'] = 'It will be a pleasure to help you!';
 $string['access'] = 'Access';
 $string['prev_activity'] = 'Previous activity';
 $string['next_activity'] = 'Next activity';
@@ -63,6 +66,8 @@ $string['fontsite'] = 'Site font';
 $string['fontsite_desc'] = 'Default font site. You can try out the fonts on <a href="https://fonts.google.com">Google Fonts site</a>.';
 $string['enablecourseindex'] = 'Enable course index';
 $string['enablecourseindex_desc'] = 'You can show/hide course index navigation';
+$string['enableclassicbreadcrumb'] = 'Enable classic breadcrumb';
+$string['enableclassicbreadcrumb_desc'] = 'This setting enables the classic breadcrumb, showing it on pages like course and categories.';
 
 // Advanced settings tab.
 $string['advancedsettings'] = 'Advanced';
@@ -72,6 +77,8 @@ $string['rawscss'] = 'Raw SCSS';
 $string['rawscss_desc'] = 'Use this field to provide SCSS or CSS code which will be injected at the end of the style sheet.';
 $string['googleanalytics'] = 'Google Analytics V4 Code';
 $string['googleanalyticsdesc'] = 'Please enter your Google Analytics V4 code to enable analytics on your website. The code format shold be like [G-XXXXXXXXXX]';
+$string['hvpcss'] = 'Raw H5P CSS';
+$string['hvpcss_desc'] = 'Use this field to provide a CSS file which will be injected on mod_hvp plugin pages.';
 
 // Frontpage settings tab.
 $string['frontpagesettings'] = 'Frontpage';
@@ -174,3 +181,6 @@ $string['privacy:accessibilitystyles_fontsizeclass'] = 'The current preference f
 $string['privacy:accessibilitystyles_sitecolorclass'] = 'The current preference for the site color is: {$a}.';
 $string['privacy:thememoovesettings_fonttype'] = 'The current preference for the font type is: {$a}.';
 $string['privacy:thememoovesettings_enableaccessibilitytoolbar'] = 'The current preference for enable accessibility toolbar is to show it.';
+
+$string['redirectmessage'] = 'This page should automatically redirect.';
+$string['redirectbtntext'] = 'If nothing is happening please click here to continue.';

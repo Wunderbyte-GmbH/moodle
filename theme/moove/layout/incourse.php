@@ -30,10 +30,6 @@ require_once($CFG->dirroot . '/course/lib.php');
 // Add block button in editing mode.
 $addblockbutton = $OUTPUT->addblockbutton();
 
-user_preference_allow_ajax_update('drawer-open-nav', PARAM_ALPHA);
-user_preference_allow_ajax_update('drawer-open-index', PARAM_BOOL);
-user_preference_allow_ajax_update('drawer-open-block', PARAM_BOOL);
-
 if (isloggedin()) {
     $courseindexopen = (get_user_preferences('drawer-open-index', true) == true);
     $blockdraweropen = (get_user_preferences('drawer-open-block') == true);
@@ -42,7 +38,7 @@ if (isloggedin()) {
     $blockdraweropen = false;
 }
 
-if (defined('BEHAT_SITE_RUNNING')) {
+if (defined('BEHAT_SITE_RUNNING') && get_user_preferences('behat_keep_drawer_closed') != 1) {
     $blockdraweropen = true;
 }
 
@@ -76,6 +72,16 @@ $overflow = '';
 if ($PAGE->has_secondary_navigation()) {
     $secondary = $PAGE->secondarynav;
 
+    if (is_array($secondary->get_children_key_list()) && in_array('modulepage', $secondary->get_children_key_list())) {
+        $coursenode = $secondary->create(
+            get_string('course', 'core'),
+            new moodle_url('/course/view.php', ['id' => $PAGE->course->id]),
+            $secondary::TYPE_COURSE
+        );
+
+        $secondary->add_node($coursenode, 'modulepage');
+    }
+
     if ($secondary->get_children_key_list()) {
         $tablistnav = $PAGE->has_tablist_secondary_navigation();
         $moremenu = new \core\navigation\output\more_menu($PAGE->secondarynav, 'nav-tabs', true, $tablistnav);
@@ -101,7 +107,7 @@ $headercontent = $header->export_for_template($renderer);
 
 $bodyattributes = $OUTPUT->body_attributes($extraclasses);
 $templatecontext = [
-    'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
+    'sitename' => format_string($SITE->shortname, true, ['context' => \core\context\course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
     'sidepreblocks' => $blockshtml,
     'hasblocks' => $hasblocks,
@@ -119,7 +125,7 @@ $templatecontext = [
     'hasregionmainsettingsmenu' => !empty($regionmainsettingsmenu),
     'overflow' => $overflow,
     'headercontent' => $headercontent,
-    'addblockbutton' => $addblockbutton
+    'addblockbutton' => $addblockbutton,
 ];
 
 $templatecontext = array_merge($templatecontext, $themesettings->footer());

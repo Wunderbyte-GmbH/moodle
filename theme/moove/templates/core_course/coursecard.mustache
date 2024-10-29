@@ -34,7 +34,7 @@
         ]
     }
 }}
-<div class="card dashboard-card" role="listitem"
+<div class="card dashboard-card mx-1" role="listitem"
     data-region="course-content"
     data-course-id="{{{id}}}">
     <a href="{{viewurl}}" tabindex="-1">
@@ -42,7 +42,7 @@
             <div class="course-category">
                 {{$coursecategory}}{{/coursecategory}}
             </div>
-            <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+            <span class="sr-only">{{fullname}}</span>
         </div>
     </a>
     <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
