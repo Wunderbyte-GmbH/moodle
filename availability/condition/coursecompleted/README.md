@@ -12,6 +12,10 @@ discussion forums, hide quizes or exams when a user finished a course.
 
 Check the global documentation about conditional availability conditions: https://docs.moodle.org/en/Conditional_activities_settings
 
+## Warning
+
+This plugin is 100% open source and has NOT been tested in Moodle Workplace, Totara, or any other proprietary software system. As long as the latter do not reward plugin developers, you can use this plugin only in 100% open source environments.
+
 ## Installation:
 
  1. Unpack the zip file into the availability/condition/ directory. A new directory will be created called coursecompleted.
@@ -19,7 +23,7 @@ Check the global documentation about conditional availability conditions: https:
 
 ## Requirements
 
-This plugin requires Moodle 3.9+
+This plugin requires Moodle 4.02+
 
 ## Troubleshooting
 
@@ -57,10 +61,12 @@ This plugin is maintained for the latest major releases of Moodle.
 
 [![Build Status](https://github.com/ewallah/moodle-availability_coursecompleted/workflows/Tests/badge.svg)](https://github.com/ewallah/moodle-availability_coursecompleted/actions)
 [![Coverage Status](https://coveralls.io/repos/github/ewallah/moodle-availability_coursecompleted/badge.svg?branch=main)](https://coveralls.io/github/ewallah/moodle-availability_coursecompleted?branch=main)
+![Mutation score](https://badgen.net/badge/Mutation%20Score%20Indicator/100)
+
 
 ## Copyright
 
-2023 eWallah.net
+eWallah.net
 
 This program is free software: you can redistribute it and/or modify it under
 the terms of the GNU General Public License as published by the Free Software

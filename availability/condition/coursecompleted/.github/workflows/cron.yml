@@ -12,13 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        moodle-branch: ['master']
-        php: ['8.0']
+        moodle-branch: ['main']
+        php: ['8.1']
         database: ['mysqli']
 
     steps:
       - name: checkout plugin
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: this-plugin
 
@@ -29,17 +29,9 @@ jobs:
           ini-values: max_input_vars=5000
           coverage: pcov
 
-      - name: npm cache
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
-          restore-keys: |
-            node-${{ matrix.php }}-${{ matrix.moodle-branch }}-${{ matrix.database }}-cache
-
       - name: composer
         run: |
-           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci ^4
+           composer create-project -n --no-dev --prefer-dist moodlehq/moodle-plugin-ci ci
            echo $(cd ci/bin; pwd) >> $GITHUB_PATH
            echo $(cd ci/vendor/bin; pwd) >> $GITHUB_PATH
            sudo locale-gen en_AU.UTF-8
@@ -54,10 +46,6 @@ jobs:
       - name: phplint
         if: ${{ !cancelled() }}
         run: moodle-plugin-ci --ansi phplint
-
-      - name: phpcpd
-        if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi phpcpd
 
       - name: phpmd
         if: ${{ !cancelled() }}
@@ -89,7 +77,7 @@ jobs:
 
       - name: phpunit
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci --ansi phpunit --coverage-text --coverage-clover
+        run: moodle-plugin-ci --ansi phpunit --testdox --coverage-text --coverage-clover
 
       - name: behat
         if: ${{ !cancelled() }}
@@ -102,6 +90,6 @@ jobs:
 
       - name: coveralls
         if: ${{ !cancelled() }}
-        run: moodle-plugin-ci coveralls-upload
+        run: moodle-plugin-ci coveralls-upload || true
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}

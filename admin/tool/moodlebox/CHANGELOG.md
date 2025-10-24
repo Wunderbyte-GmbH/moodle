@@ -3,6 +3,61 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](https://semver.org/) and follow principles of [keep a changelog](https://keepachangelog.com).
 
+## Version 3.0.0, 2025-10-09
+
+__This version is not compatible with versions of Moodle prior to Moodle 4.4!__
+
+### Added
+- Add support for Moodle 5.1 new directory structure (issue #159).
+
+### Changed
+- Test against upcoming Moodle 5.1 (issue #163).
+- Make `changewifisettings.py` script more robust (2f6db18, 63f074b)
+- Remove old network stack support (issue #161).
+
+## Version 2.20.0, 2025-04-27
+
+__This version is not compatible with versions of Moodle prior to Moodle 4.4!__
+
+### Changed
+- Test against upcoming Moodle 5.0 (issue #157).
+
+## Version 2.19.0, 2025-01-13
+
+__This version is not compatible with versions of Moodle prior to Moodle 4.4!__
+
+### Added
+- Add detection of Raspberry Pi 5 16GB model (issue #152).
+- Add detection of Raspberry Pi 5 2GB model (issue #154).
+
+## Version 2.18.2, 2024-10-31
+
+__This version is not compatible with versions of Moodle prior to Moodle 4.4!__
+
+### Fixed
+- Channels 12 and 13 for wireless AP can be selected (issue #143).
+- Avoid warnings when not Ethernet interface on device (issue #148).
+- Match Moodle required version with Moodle minimum supported version (issue #147).
+
+## Version 2.18.1, 2024-10-13
+
+__This version is not compatible with versions of Moodle prior to Moodle 4.4!__
+
+### Changed
+- Tested against upcoming Moodle 4.5 (issue #141).
+
+## Version 2.18.0, 2024-08-07
+
+__This version is not compatible with versions of Moodle prior to Moodle 4.4!__
+
+### Changed
+-  Migrate legacy libphp callbacks to hooks (issue #135), enabling Moodle 4.4.x support.
+
+## Version 2.17.5, 2024-03-28
+
+### Changed
+-  Re-add the client name when displaying wireless client info in the dashboard (issue #132; related issue #128).
+
 ## Version 2.17.4, 2024-01-02
 
 ### Changed
@@ -19,8 +74,8 @@ This project adheres to [Semantic Versioning](https://semver.org/) and follow pr
 
 ## Version 2.17.2, 2023-11-28
 
-### Add
-- New code added to workaround a bug with wifi protocol on RPi3B (issue https://github.com/moodlebox/moodlebox/issues/319).
+### Added
+- New code added to workaround a bug with wifi protocol on RPi3B (issue #145).
 
 ### Fixed
 - Rename wrong filename in script and add routine to fix the buggy filename on devices (issue #127).
@@ -32,7 +87,7 @@ This project adheres to [Semantic Versioning](https://semver.org/) and follow pr
 
 ## Version 2.17.0, 2023-10-01
 
-### Add
+### Added
 - Add support of NetworkManager for upcoming Bookworm-based RPi OS version (PR #123).
 - Add detection of just announced new Raspberry Pi 5 (issue #122).
 
@@ -69,7 +124,7 @@ This project adheres to [Semantic Versioning](https://semver.org/) and follow pr
 
 ## Version 2.16.0, 2023-07-30
 
-### Add
+### Added
 - Enable displaying date and time buttons in the footer of any page for users with adequate role (issue #94).
 
 ### Changed
@@ -83,7 +138,7 @@ This project adheres to [Semantic Versioning](https://semver.org/) and follow pr
 
 ## Version 2.15.0, 2023-05-04
 
-### Add
+### Added
 - Detect CM4S model (issue #112).
 
 ### Changed
@@ -99,7 +154,7 @@ This project adheres to [Semantic Versioning](https://semver.org/) and follow pr
 
 ## Version 2.14.1, 2022-11-19
 
-### Add
+### Added
 - Add better graphical separation of footer buttons (no issue number, commit 21da4fadf108b76e467690ac06d5c2db6c8c01a1).
 
 ### Changed

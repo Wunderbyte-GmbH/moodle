@@ -21,6 +21,9 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace format_tiles;
+use format_tiles\local\modal_helper;
+use format_tiles\local\video_cm;
+use format_tiles\local\format_option;
 
 /**
  * Event observers supported by this format.
@@ -36,12 +39,11 @@ class observer {
      * @throws \dml_exception
      */
     public static function course_deleted(\core\event\course_deleted $event) {
-        global $DB;
         $courseid = $event->objectid;
-        $DB->delete_records("user_preferences", ["name" => 'format_tiles_stopjsnav_' . $courseid]);
-        \format_tiles\local\tile_photo::delete_files_from_ids($courseid);
+        \format_tiles\local\tile_photo::delete_files_from_ids($courseid, -1);
         \format_tiles\local\format_option::unset_all_course($courseid);
-        self::clear_cache_modal_cmids($courseid);
+        modal_helper::clear_cache_modal_cmids($courseid);
+        video_cm::clear_cached_cmids($courseid);
     }
 
     /**
@@ -62,10 +64,12 @@ class observer {
      * @param \core\event\course_module_deleted $event
      */
     public static function course_module_deleted(\core\event\course_module_deleted $event) {
-        if (self::mod_uses_cm_modal_cache($event->other['modulename'])) {
-            self::clear_cache_modal_cmids($event->courseid);
+        if (modal_helper::mod_uses_cm_modal_cache($event->other['modulename'])) {
+            modal_helper::clear_cache_modal_cmids($event->courseid, $event->other['modulename']);
         }
-
+        if ($event->other['modulename'] === 'url') {
+            video_cm::clear_cached_cmids($event->courseid);
+        }
     }
 
     /**
@@ -73,8 +77,11 @@ class observer {
      * @param \core\event\course_module_created $event
      */
     public static function course_module_created(\core\event\course_module_created $event) {
-        if (self::mod_uses_cm_modal_cache($event->other['modulename'])) {
-            self::clear_cache_modal_cmids($event->courseid);
+        if (modal_helper::mod_uses_cm_modal_cache($event->other['modulename'])) {
+            modal_helper::clear_cache_modal_cmids($event->courseid, $event->other['modulename']);
+        }
+        if ($event->other['modulename'] === 'url') {
+            video_cm::clear_cached_cmids($event->courseid);
         }
     }
 
@@ -83,8 +90,11 @@ class observer {
      * @param \core\event\course_module_updated $event
      */
     public static function course_module_updated(\core\event\course_module_updated $event) {
-        if (self::mod_uses_cm_modal_cache($event->other['modulename'])) {
-            self::clear_cache_modal_cmids($event->courseid);
+        if (modal_helper::mod_uses_cm_modal_cache($event->other['modulename'])) {
+            modal_helper::clear_cache_modal_cmids($event->courseid, $event->other['modulename']);
+        }
+        if ($event->other['modulename'] === 'url') {
+            video_cm::clear_cached_cmids($event->courseid);
         }
     }
 
@@ -108,27 +118,8 @@ class observer {
      * @return void
      */
     public static function course_restored(\core\event\course_restored $event) {
-        self::clear_cache_modal_cmids($event->courseid);
-    }
-
-    /**
-     * Is this module one which uses the cache to store modal cm data?
-     * @param string $modname
-     * @return bool
-     */
-    private static function mod_uses_cm_modal_cache(string $modname): bool {
-        return in_array($modname, ['resource', 'page', 'url']);
-    }
-
-    /**
-     * Clear the cache of resource modal IDs for a given course.
-     * @param int $courseid
-     * @return void
-     * @throws \coding_exception
-     * @throws \dml_exception
-     */
-    private static function clear_cache_modal_cmids(int $courseid) {
-        $cache = \cache::make('format_tiles', 'modalcmids');
-        $cache->delete($courseid);
+        modal_helper::clear_cache_modal_cmids($event->courseid);
+        video_cm::clear_cached_cmids($event->courseid);
+        format_option::clear_caches_course($event->courseid);
     }
 }

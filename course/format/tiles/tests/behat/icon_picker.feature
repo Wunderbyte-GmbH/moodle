@@ -33,31 +33,33 @@ Feature: Teacher can allocate icons to tiles
   Scenario: Teacher can use icon picker to pick icons, and can rename section afterwards
     When I log in as "teacher1"
     And I am on "Business Law" course homepage with editing mode on
+    And I wait until the page is ready
+    And I wait "1" seconds
     And I click on "#tileicon_1" "css_element"
     And I wait until the page is ready
     And I wait "3" seconds
     And "Pick a new icon or background photo" "dialogue" should be visible
-    And I click on ".tile-icon[data-original-title=\"Map\"]" "css_element" in the "#icon_picker_modal" "css_element"
+    And I click on "button.pickericon[title=\"Map\"]" "css_element" in the "#icon_picker_modal" "css_element"
     And I wait until the page is ready
     And I click on "#tileicon_2" "css_element"
     And I wait until the page is ready
-    And I click on ".tile-icon[data-original-title=\"Refresh\"]" "css_element" in the "#icon_picker_modal" "css_element"
+    And I click on "button.pickericon[title=\"Refresh\"]" "css_element" in the "#icon_picker_modal" "css_element"
     And I wait until the page is ready
     And I click on "#tileicon_3" "css_element"
     And I wait until the page is ready
-    And I click on ".tile-icon[data-original-title=\"Star (shaded)\"]" "css_element" in the "#icon_picker_modal" "css_element"
+    And I click on "button.pickericon[title=\"Star (shaded)\"]" "css_element" in the "#icon_picker_modal" "css_element"
     And I wait until the page is ready
     And I click on "#tileicon_4" "css_element"
     And I wait until the page is ready
-    And I click on ".tile-icon[data-original-title=\"Tasks\"]" "css_element" in the "#icon_picker_modal" "css_element"
+    And I click on "button.pickericon[title=\"Tasks\"]" "css_element" in the "#icon_picker_modal" "css_element"
     And I wait until the page is ready
     And I click on "#tileicon_5" "css_element"
     And I wait until the page is ready
-    And I click on ".tile-icon[data-original-title=\"British pound\"]" "css_element" in the "#icon_picker_modal" "css_element"
+    And I click on "button.pickericon[title=\"British pound\"]" "css_element" in the "#icon_picker_modal" "css_element"
     And I wait until the page is ready
 
 #    // one title edit just to check we can after the above (this is also done elsewhere)
-    When I click on "Edit tile name" "link" in the "li#section-1" "css_element"
+    When I click on "Edit section name" "link" in the "li#section-1" "css_element"
     And I set the field "New name for section Tile 1" to "Setting up in business"
     And I press the enter key
     Then I should not see "Tile 1" in the "region-main" "region"
@@ -65,7 +67,7 @@ Feature: Teacher can allocate icons to tiles
     And I am on "Business Law" course homepage
     And I should not see "Tile 1" in the "region-main" "region"
 
-    When I click on "Edit tile name" "link" in the "li#section-2" "css_element"
+    When I click on "Edit section name" "link" in the "li#section-2" "css_element"
     And I set the field "New name for section Tile 2" to "Directors' Duties"
     And I press the enter key
     Then I should not see "Tile 2" in the "region-main" "region"

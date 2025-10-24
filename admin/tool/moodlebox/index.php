@@ -28,11 +28,11 @@
  * @link       https://github.com/moodlebox/moodle-tool_moodlebox
  * @package    tool_moodlebox
  * @copyright  2016 onwards Nicolas Martignoni {@link mailto:nicolas@martignoni.net}
+ * @copyright  2024 onwards Patrick Lemaire
  * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(dirname(dirname(dirname(dirname(__FILE__)))).'/config.php');
-require_once($CFG->dirroot.'/admin/tool/moodlebox/forms.php');
 require_once($CFG->libdir.'/moodlelib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/tablelib.php');
@@ -87,11 +87,17 @@ if ( $hardwaredata = \tool_moodlebox\local\utils::get_hardware_model() ) {
             break;
         case '5':
             switch ($hardwaredata['memory']) {
+                case '2GB':
+                    $platform = 'rpi5twogb';
+                    break;
                 case '4GB':
                     $platform = 'rpi5fourgb';
                     break;
                 case '8GB':
                     $platform = 'rpi5eightgb';
+                    break;
+                case '16GB':
+                     $platform = 'rpi5sixteengb';
                     break;
             };
             break;
@@ -129,15 +135,15 @@ if ( strpos($platform, 'rpi') !== false ) { // We are on a RPi.
         $moodleboxversion = $moodleboxinfo['version'];
     }
 
-    // We use NetworkManager for network management if MoodleBox version is greater than '4.5.1'.
-    $networkmanager = version_compare($moodleboxversion, '4.5.1', '>');
-
     // Get CPU load.
     $cpuload = sys_getloadavg();
 
+    // Get DHCP leases file name.
+    $leasesfile = '/tmp/dnsmasq.leases';
+
     // Get IP addresses of connected clients.
     $interface = 'uap0';
-    $leases = \tool_moodlebox\local\utils::get_connected_ip_adresses($interface);
+    $leases = \tool_moodlebox\local\utils::get_connected_ip_adresses($interface, $leasesfile);
     $dhcpclientnumber = count($leases);
 
     // Get local static IP address.
@@ -175,48 +181,26 @@ if ( strpos($platform, 'rpi') !== false ) { // We are on a RPi.
     // Get plugin version.
     $moodleboxpluginversion = $plugin->release . ' (' . $plugin->version . ')';
 
-    if ($networkmanager) {
-        // Get current wireless access point data with NetworkManager.
-        if ( $wifiinfo = exec('nmcli -g 802-11-wireless.mode con show WifiAP') ) {
-            $wifiinfodata = [];
-            $wifiinfokeys = ['channel', 'ssid', 'password', 'countrycode', 'hidden'];
-            $currentapchannel = exec('nmcli -g 802-11-wireless.channel con show WifiAP', $wifiinfodata);
-            $currentssid = exec('nmcli -g 802-11-wireless.ssid con show WifiAP', $wifiinfodata);
-            if (!$currentappassword = exec('sudo nmcli -s -g 802-11-wireless-security.psk con show WifiAP', $wifiinfodata)) {
-                array_push($wifiinfodata, null);
-            }
-            $currentregcountry = exec('iw reg get | awk \'/country/{print $2; exit}\' | cut -d\':\' -f1', $wifiinfodata);
-            $currentssidhidden = exec('nmcli -g 802-11-wireless.hidden con show WifiAP', $wifiinfodata);
-            $wifiinfo = array_combine(
-                $wifiinfokeys,
-                $wifiinfodata,
-            );
-            $currentapchannel = $wifiinfo['channel'];
-            $currentssid = $wifiinfo['ssid'];
-            $currentappassword = $wifiinfo['password'];
-            $currentregcountry = $wifiinfo['countrycode'];
-            $currentssidhidden = ($wifiinfo['hidden'] === 'yes');
+    // Get current wireless access point data.
+    if ( $wifiinfo = exec('nmcli -g 802-11-wireless.mode con show WifiAP') ) {
+        $wifiinfodata = [];
+        $wifiinfokeys = ['channel', 'ssid', 'password', 'countrycode', 'hidden'];
+        $currentapchannel = exec('nmcli -g 802-11-wireless.channel con show WifiAP', $wifiinfodata);
+        $currentssid = exec('nmcli -g 802-11-wireless.ssid con show WifiAP', $wifiinfodata);
+        if (!$currentappassword = exec('sudo nmcli -s -g 802-11-wireless-security.psk con show WifiAP', $wifiinfodata)) {
+            array_push($wifiinfodata, null);
         }
-    } else {
-        // Get current Wi-Fi SSID, channel and password with dhcpcd and hostapd.
-        if ( $wifiinfo = \tool_moodlebox\local\utils::parse_config_file('/etc/hostapd/hostapd.conf', false, INI_SCANNER_RAW) ) {
-            $currentapchannel = $wifiinfo['channel'];
-            if ( array_key_exists('ssid', $wifiinfo) ) {
-                $currentssid = $wifiinfo['ssid'];
-            } else {
-                $currentssid = $wifiinfo['ssid2'];
-                // Convert $currentssid from hex {@link https://stackoverflow.com/a/46344675}.
-                $currentssid = pack("H*", $currentssid);
-            }
-            $currentappassword = array_key_exists('wpa_passphrase', $wifiinfo) ? $wifiinfo['wpa_passphrase'] : null;
-            $currentregcountry = $wifiinfo['country_code'];
-            if ( $currentssidhidden = array_key_exists('ignore_broadcast_ssid', $wifiinfo) ) {
-                $currentssidhidden = $wifiinfo['ignore_broadcast_ssid'];
-            } else {
-                $currentssidhidden = '0';
-            }
-            $currentssidhidden = ($currentssidhidden === 1);
-        }
+        $currentregcountry = exec('iw reg get | awk \'/country/{print $2; exit}\' | cut -d\':\' -f1', $wifiinfodata);
+        $currentssidhidden = exec('nmcli -g 802-11-wireless.hidden con show WifiAP', $wifiinfodata);
+        $wifiinfo = array_combine(
+            $wifiinfokeys,
+            $wifiinfodata,
+        );
+        $currentapchannel = $wifiinfo['channel'];
+        $currentssid = $wifiinfo['ssid'];
+        $currentappassword = $wifiinfo['password'];
+        $currentregcountry = $wifiinfo['countrycode'];
+        $currentssidhidden = ($wifiinfo['hidden'] === 'yes');
     }
 
     // Get ethernet addresses.
@@ -257,9 +241,9 @@ if ( strpos($platform, 'rpi') !== false ) { // We are on a RPi.
     if ($dhcpclientnumber > 0) {
         $table->add_data([get_string('dhcpclients', 'tool_moodlebox') .
                 ' (' . get_string('dhcpclientnumber', 'tool_moodlebox') . ': ' . $dhcpclientnumber . ')', '', ]);
-        foreach ($leases as $mac => $ip) {
+        foreach ($leases as $mac => $data) {
             $table->add_data([get_string('dhcpclientinfo', 'tool_moodlebox'),
-                    $ip . ' (' . $mac . ')', ], 'subinfo');
+                    $data['ip'] . ' (' . $data['name'] . ', ' . $mac . ')', ], 'subinfo');
         }
     }
     // Ethernet info.
@@ -330,7 +314,7 @@ if ( strpos($platform, 'rpi') !== false ) { // We are on a RPi.
     $datetimetriggerfile = '.set-server-datetime';
 
     if (file_exists($datetimetriggerfile)) {
-        $datetimesetform = new datetimeset_form();
+        $datetimesetform = new \tool_moodlebox\form\datetimeset_form();
 
         if ($data = $datetimesetform->get_data()) {
             if (!empty($data->submitbutton)) {
@@ -356,7 +340,7 @@ if ( strpos($platform, 'rpi') !== false ) { // We are on a RPi.
     $passwordtriggerfile = '.newpassword';
 
     if (file_exists($passwordtriggerfile)) {
-        $changepasswordform = new changepassword_form();
+        $changepasswordform = new \tool_moodlebox\form\changepassword_form();
 
         if ($data = $changepasswordform->get_data()) {
             if (!empty($data->submitbutton)) {
@@ -380,7 +364,7 @@ if ( strpos($platform, 'rpi') !== false ) { // We are on a RPi.
     $aptriggerfile = '.wifisettings';
 
     if (file_exists($aptriggerfile)) {
-        $wifisettingsform = new wifisettings_form();
+        $wifisettingsform = new \tool_moodlebox\form\wifisettings_form();
 
         if ($data = $wifisettingsform->get_data()) {
             if (!empty($data->submitbutton)) {
@@ -430,7 +414,13 @@ if ( strpos($platform, 'rpi') !== false ) { // We are on a RPi.
         $resizetriggerfile = '.resize-partition';
 
         if (file_exists($resizetriggerfile)) {
-            $resizepartitionform = new resizepartition_form(null, null, 'post', '', ['id' => 'formresizepartition']);
+            $resizepartitionform = new \tool_moodlebox\form\resizepartition_form(
+                null,
+                null,
+                'post',
+                '',
+                ['id' => 'formresizepartition'],
+            );
 
             if ($data = $resizepartitionform->get_data()) {
                 if (!empty($data->resizepartitionbutton)) {
@@ -457,7 +447,7 @@ if ( strpos($platform, 'rpi') !== false ) { // We are on a RPi.
     $shutdowntriggerfile = '.shutdown-server';
 
     if (file_exists($reboottriggerfile) && file_exists($shutdowntriggerfile)) {
-        $restartshutdownform = new restartshutdown_form(null, null, 'post', '', ['id' => 'formrestartstop']);
+        $restartshutdownform = new \tool_moodlebox\form\restartshutdown_form(null, null, 'post', '', ['id' => 'formrestartstop']);
 
         if ($data = $restartshutdownform->get_data()) {
             if (!empty($data->restartbutton)) {

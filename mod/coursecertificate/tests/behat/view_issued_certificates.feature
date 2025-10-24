@@ -92,11 +92,11 @@ Feature: View the certificates that have been issued
     # Ensure consistent sort by email address.
     And I click on "Email address" "link" in the "generaltable" "table"
     And the following should exist in the "generaltable" table:
-      | First name / Surname | Email address         | Country   | Status | Expiry date | Date issued         |
-      | Student 01           | student01@example.com | Spain     | Valid  | Never       | 1 January 2002      |
-      | Student 02           | student02@example.com | France    | Valid  | Never       | 2 January 2002      |
-      | Student 03           | student03@example.com | Spain     | Valid  | Never       | ##today##%d %B %Y## |
-      | Student 04           | student04@example.com | Portugal  | Valid  | Never       | ##today##%d %B %Y## |
+      | First name | Email address         | Country  | Status | Expiry date | Date issued         |
+      | Student 01 | student01@example.com | Spain    | Valid  | Never       | 1 January 2002      |
+      | Student 02 | student02@example.com | France   | Valid  | Never       | 2 January 2002      |
+      | Student 03 | student03@example.com | Spain    | Valid  | Never       | ##today##%d %B %Y## |
+      | Student 04 | student04@example.com | Portugal | Valid  | Never       | ##today##%d %B %Y## |
 
   Scenario: Filter issued certificates by group
     And I log in as "teacher1"
@@ -104,16 +104,16 @@ Feature: View the certificates that have been issued
     And I follow "My certificate"
     And I set the field "Separate groups" to "Group 1"
     And the following should exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 01           | student01@example.com |
-      | Student 02           | student02@example.com |
+      | First name | Email address         |
+      | Student 01 | student01@example.com |
+      | Student 02 | student02@example.com |
     And the following should not exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 03           | student03@example.com |
+      | First name | Email address         |
+      | Student 03 | student03@example.com |
     And I set the field "Separate groups" to "All participants"
     And the following should exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 03           | student03@example.com |
+      | First name | Email address         |
+      | Student 03 | student03@example.com |
 
   Scenario: View the issued certificates list as non-editing teacher and separate/visible groups
     And I log in as "teacher2"
@@ -124,11 +124,11 @@ Feature: View the certificates that have been issued
     And the "Separate groups" select box should contain "Group 2"
     And I select "Group 3" from the "Separate groups" singleselect
     And the following should not exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 03           | student03@example.com |
+      | First name | Email address         |
+      | Student 03 | student03@example.com |
     And the following should exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 05           | student05@example.com |
+      | First name | Email address         |
+      | Student 05 | student05@example.com |
     And I log out
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
@@ -141,17 +141,17 @@ Feature: View the certificates that have been issued
     And I am on "Course 1" course homepage
     And I follow "My certificate"
     And the following should not exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 01           | student01@example.com |
+      | First name | Email address         |
+      | Student 01 | student01@example.com |
     And the "Separate groups" select box should not contain "Group 1"
     And the "Separate groups" select box should contain "Group 2"
     And I select "Group 3" from the "Separate groups" singleselect
     And the following should not exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 03           | student03@example.com |
+      | First name | Email address         |
+      | Student 03 | student03@example.com |
     And the following should exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 05           | student05@example.com |
+      | First name | Email address         |
+      | Student 05 | student05@example.com |
 
   Scenario: View issued certificates
     And I log in as "teacher1"
@@ -166,13 +166,13 @@ Feature: View the certificates that have been issued
     And I follow "My certificate"
     And I click on "Email address" "link" in the "generaltable" "table"
     And the following should exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 06           | student06@example.com |
+      | First name | Email address         |
+      | Student 06 | student06@example.com |
     And I press "Revoke" action in the "student06@example.com" report row
     And I click on "Revoke" "button" in the "Confirm" "dialogue"
     And the following should not exist in the "generaltable" table:
-      | First name / Surname | Email address         |
-      | Student 06           | student06@example.com |
+      | First name | Email address         |
+      | Student 06 | student06@example.com |
 
   Scenario: Verify issued certificates
     And I log in as "teacher1"
@@ -201,6 +201,6 @@ Feature: View the certificates that have been issued
     And I follow "Profile" in the user menu
     And I click on "//a[contains(.,'My certificates') and contains(@href,'tool/certificate')]" "xpath_element"
     And the following should exist in the "generaltable" table:
-      | Certificate            | Code  |
+      | Name                   | Code  |
       | Template 01 - Course 1 | code1 |
       | Template 01 - Course 1 | code2 |

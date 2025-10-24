@@ -32,24 +32,9 @@ class renderer extends section_renderer {
      * @return void
      */
     public function render_content() {
-        global $DB;
         $format = course_get_format($this->page->course->id);
         $course = $format->get_course();
-        $displaysection = optional_param('section', 0, PARAM_INT);
-        if (!$displaysection) {
-            // Try to get it from url params which may have been added /course/view.php incl from sectionid.
-            // This enables us to respect "permalink" section URLs as AMD format_tiles/course redirects them to &sectionid=xx.
-            $displaysection = $this->page->url->param('section') ?? null;
-        }
-        if (!$displaysection && $this->page->url->compare(new \moodle_url('/course/section.php'), URL_MATCH_BASE)) {
-            // In Moodle 4.4+ we may be on /course/section/view.php?id=xx where xx is a section ID.
-            $sectionid = required_param('id', PARAM_INT);
-            $displaysection = $DB->get_field(
-                'course_sections',
-                'section',
-                ['id' => $sectionid, 'course' => $this->page->course->id]
-            ) ?? null;
-        }
+        $sectionnumber = $format->get_sectionnum();
         if ($this->page->user_is_editing()) {
             // If user is editing, we render the page the new way.
             // We will use this for non editing as well in a later version, but not yet.
@@ -58,26 +43,26 @@ class renderer extends section_renderer {
             $displayoptions = [];
             $contentoutput = new $contentclass(
                 $format,
-                $displaysection,
+                $sectionnumber,
                 null,
                 $displayoptions
             );
             $data = $contentoutput->export_for_template($this);
         } else {
             // If user not editing, for now we render the page the old way.
-            if (self::display_multiple_section_page((bool)$displaysection, false)) {
+            if (self::display_multiple_section_page((bool)$sectionnumber, false)) {
                 $template = 'format_tiles/multi_section_page';
                 $templateable = new \format_tiles\output\course_output($course, false, null, $this);
                 $data = $templateable->export_for_template($this);
             } else {
                 $template = 'format_tiles/single_section_page';
-                $templateable = new \format_tiles\output\course_output($course, false, $displaysection, $this);
+                $templateable = new \format_tiles\output\course_output($course, false, $sectionnumber, $this);
                 $data = $templateable->export_for_template($this);
             }
         }
         // We init JS here and not in format.php.
         // This is because in Moodle 4.4+ we may be in this function via section.php and not format.php.
-        \format_tiles\local\util::init_js($course, $this->page->context->id, $displaysection);
+        \format_tiles\local\util::init_js($course, $this->page->context->id, $sectionnumber);
 
         echo $this->render_from_template($template, $data);
     }
@@ -141,7 +126,7 @@ class renderer extends section_renderer {
     private function display_multiple_section_page(bool $displaysection, bool $isediting): bool {
         global $SESSION;
         // We display the multi section page if the user is not requesting a specific single section.
-        // We also display it if user is requesting a specific section (URL &section=xx) with JS enabled.
+        // We also display it if user is requesting a specific section (URL section.php?id=xx) with JS enabled.
         // We know they have JS if $SESSION->format_tiles_jssuccessfullyused is set.
         // In that case we show them the multi section page and use JS to open the section.
         if (optional_param('canceljssession', false, PARAM_BOOL)) {
@@ -150,13 +135,8 @@ class renderer extends section_renderer {
         }
 
         if (!$displaysection) {
-            // If the URL does not request a specific section page (&section=xx) we always show multiple secs.
+            // If the URL does not request a specific section page (section.php?id=xx) we always show multiple secs.
             return true;
-        }
-
-        if (optional_param('singlesec', 0, PARAM_INT)) {
-            // Singlesec param is appended to inplace editable links by format_tiles\inplace_editable_render_section_name().
-            return false;
         }
 
         // Otherwise, even if URL requests single, we may show multiple in certain situations.
@@ -166,5 +146,35 @@ class renderer extends section_renderer {
             }
         }
         return false;
+    }
+
+    /**
+     * In Moodle 4.5 we may have sub-sections.
+     * We override this here and use existing local code for subtiles pending full refactoring.
+     * @param \renderable $widget
+     * @return bool|string
+     * @throws \coding_exception
+     * @throws \dml_exception
+     * @throws \moodle_exception
+     */
+    public function render_delegatedsection($widget) {
+        $parentdata = $widget->export_for_template($this);
+        $sectionnum = $parentdata->num;
+        $templateable = new \format_tiles\output\course_output(
+            $this->page->course, true, $sectionnum
+        );
+        $data = $templateable->export_for_template($this);
+        $template = 'format_tiles/course_modules_subsection';
+
+        // If subtiles are not being used we can use core widget data and template.
+        $usecore = !$data['useSubtiles'] || $this->page->user_is_editing();
+        if ($usecore) {
+            $data = $parentdata;
+            $data->contentcollapsed = true;
+            $data->isdelegatedsection = true;
+            $template = 'format_tiles/local/content/delegatedsection';
+        }
+
+        return $this->render_from_template($template, $data);
     }
 }

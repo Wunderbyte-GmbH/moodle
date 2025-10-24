@@ -18,7 +18,7 @@
  * Basic unit tests for the coursecompleted condition.
  *
  * @package   availability_coursecompleted
- * @copyright 2017 iplusacademy (www.iplusacademy.org)
+ * @copyright iplusacademy (www.iplusacademy.org)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,18 +35,17 @@ use core_completion;
  * Bare tests for the coursecompleted condition.
  *
  * @package   availability_coursecompleted
- * @copyright 2017 iplusacademy (www.iplusacademy.org)
+ * @copyright iplusacademy (www.iplusacademy.org)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @coversDefaultClass \availability_coursecompleted
  */
-class basic_test extends \basic_testcase {
-
+final class basic_test extends \basic_testcase {
     /**
      * Tests the constructor including error conditions.
      * @covers \availability_coursecompleted\condition
      */
-    public function test_constructor() {
+    public function test_constructor(): void {
         // This works with no parameters.
         $structure = (object)[];
         try {
@@ -106,7 +105,7 @@ class basic_test extends \basic_testcase {
      * Tests the save() function.
      * @covers \availability_coursecompleted\condition
      */
-    public function test_save() {
+    public function test_save(): void {
         $structure = (object)['id' => '1'];
         $cond = new condition($structure);
         $structure->type = 'coursecompleted';
@@ -117,7 +116,7 @@ class basic_test extends \basic_testcase {
      * Tests json.
      * @covers \availability_coursecompleted\condition
      */
-    public function test_json() {
+    public function test_json(): void {
         $this->assertEqualsCanonicalizing((object)['type' => 'coursecompleted', 'id' => '3'], condition::get_json('3'));
         $this->assertEqualsCanonicalizing((object)['type' => 'coursecompleted', 'id' => '0'], condition::get_json('0'));
     }

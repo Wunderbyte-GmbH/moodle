@@ -83,11 +83,11 @@ class behat_format_tiles extends behat_base {
             );
         }
 
-        $jsscript = "(function(){return $('style#format-tiles-dynamic-css').length;})();";
-        $stylesincluded = $this->getSession()->evaluateScript($jsscript) === 1;
+        $jsscript = "(() => {return document.querySelector('style#format-tiles-dynamic-css') !== null;})();";
+        $stylesincluded = $this->getSession()->evaluateScript($jsscript);
         if (!$stylesincluded) {
             throw new \Behat\Mink\Exception\ExpectationException(
-                "style tag for dynamic styles not found", $this->getSession()
+                "Style tag for dynamic styles not found", $this->getSession()
             );
         }
     }
@@ -100,8 +100,7 @@ class behat_format_tiles extends behat_base {
      * @return void
      */
     public function format_tiles_tile_has_icon(int $tilenumber, string $icon) {
-        $selector = "#tileicon_$tilenumber i";
-        $script = "(function(){return $('$selector').hasClass('fa-$icon');})();";
+        $script = "(() => {return document.querySelector('#tileicon_$tilenumber i').classList.contains('fa-$icon');})();";
         $result = $this->getSession()->evaluateScript($script);
         if (!$result) {
             throw new \Behat\Mink\Exception\ExpectationException(
@@ -117,9 +116,9 @@ class behat_format_tiles extends behat_base {
      * @return void
      */
     public function format_tiles_js_config_exists_on_page() {
-        $script = "(function(){return $('#format-tiles-js-config').length;})()";
+        $script = "(() => {return document.getElementById('format-tiles-js-config') !== null;})()";
         $result = $this->getSession()->evaluateScript($script);
-        if ($result !== 1) {
+        if (!$result) {
             throw new \Behat\Mink\Exception\ExpectationException(
                 "Tiles JS config div not found", $this->getSession()
             );
@@ -129,18 +128,21 @@ class behat_format_tiles extends behat_base {
     /**
      * Get a CSS property for an element.
      *
-     * @param string $selector jquery selector e.g. '#tile-1'
+     * @param string $selector e.g. '#tile-1'
      * @param string $property which CSS property e.g. 'border-top-color'
      * @return string $value
      */
     private function element_get_css_value(string $selector, string $property): string {
-        $script = "(function(){return $('$selector').css('$property');})();";
+        $script = "(() => {
+            const elem = document.querySelector('$selector');
+            return elem !== null ? window.getComputedStyle(elem).getPropertyValue('$property') : null;
+        })();";
         $result = $this->getSession()->evaluateScript($script);
         if (gettype($result) == 'string') {
             return $result;
         }
         throw new \Behat\Mink\Exception\ExpectationException(
-            "Error getting CSS property $property for $selector", $this->getSession()
+            "Error getting CSS property '$property' for element '$selector'", $this->getSession()
         );
     }
 
@@ -219,7 +221,7 @@ class behat_format_tiles extends behat_base {
             $cms[$cminfo->name] = $cminfo->id;
         }
         $this->wait_for_pending_js(); // Wait for AJAX request to complete.
-        $this->getSession()->wait(1000);
+        $this->getSession()->wait(1500);
         if (!isset($cms[$activitytitle])) {
             throw new \Behat\Mink\Exception\ExpectationException(
             "Activity type '$modtype' title '$activitytitle' not found in $coursefullname."
@@ -270,7 +272,6 @@ class behat_format_tiles extends behat_base {
      * @Then /^activity in format tiles is not dimmed "(?P<activityname_string>(?:[^"]|\\")*)"$/
      * @param string $activityname
      * @return bool
-     * @throws \Behat\Mink\Exception\ExpectationException
      */
     public function activity_in_format_tiles_is_not_dimmed($activityname) {
         return !$this->activity_in_format_tiles_is_dimmed($activityname);
@@ -284,10 +285,10 @@ class behat_format_tiles extends behat_base {
      * @throws Exception
      */
     public function i_click_on_tile($tileumber) {
-        $tileid = behat_context_helper::escape("tile-" . $tileumber);
+        $tileid = behat_context_helper::escape("sectionlink-" . $tileumber);
 
         // Click the tile.
-        $this->execute("behat_general::i_click_on", ["//li[@id=" . $tileid . "]", "xpath_element"]);
+        $this->execute("behat_general::i_click_on", ["//a[@id=" . $tileid . "]", "xpath_element"]);
         $this->getSession()->wait(1500); // Important to wait here as page is scrolling and might click wrong thing after.
         $this->wait_for_pending_js(); // Wait for AJAX request to complete.
     }
@@ -323,7 +324,7 @@ class behat_format_tiles extends behat_base {
 
         // Click the button.
         $this->wait_for_pending_js();
-        $this->execute("behat_general::i_click_on", ["//a[@id=" . $tileid . "]", "xpath_element"]);
+        $this->execute("behat_general::i_click_on", ["//button[@id=" . $tileid . "]", "xpath_element"]);
         $this->execute('behat_general::wait_until_the_page_is_ready');
         $this->getSession()->wait(2000);
         $this->wait_for_pending_js(); // Wait for AJAX request to complete.
@@ -366,6 +367,9 @@ class behat_format_tiles extends behat_base {
      * @throws Exception
      */
     public function click_format_tiles_activity($activityname) {
+        // As the open tile overlay is moved when page is ready, add a short pause to ensure that is complete.
+        $this->wait_for_pending_js();
+        $this->getSession()->wait(100);
         $this->execute("behat_general::i_click_on_in_the", [$this->escape($activityname), 'link', '#page-content', 'css_element']);
     }
 
@@ -448,7 +452,6 @@ class behat_format_tiles extends behat_base {
      * @Given /^I hide tile "(?P<section_number>\d+)"$/
      * @param int $sectionnumber
      * @throws coding_exception
-     * @throws \Behat\Mink\Exception\ExpectationException
      */
     public function i_hide_tile($sectionnumber) {
         // Ensures the section exists.
@@ -461,7 +464,6 @@ class behat_format_tiles extends behat_base {
      *
      * @Given /^I show tile "(?P<section_number>\d+)"$/
      * @param int $sectionnumber
-     * @throws \Behat\Mink\Exception\ExpectationException
      * @throws coding_exception
      */
     public function i_show_tile($sectionnumber) {
@@ -552,7 +554,8 @@ class behat_format_tiles extends behat_base {
         $tilephoto = new \format_tiles\local\tile_photo($context, $sectionid);
         if (!$tilephoto->get_file()) {
             throw new \Behat\Mink\Exception\ExpectationException(
-                "File not found in files table for course $coursename tile $sectionnumber photo $photoname ",
+                "File not found in files table for course $coursename | course ID $courseid "
+                . "context ID $context->id | tile $sectionnumber | photo $photoname | element ID $sectionid",
                 $this->getSession()
             );
         }

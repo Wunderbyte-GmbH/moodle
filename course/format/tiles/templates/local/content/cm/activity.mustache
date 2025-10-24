@@ -61,10 +61,8 @@
 {{/ismoodle42minus}}
 {{^ismoodle42minus}}
     {{#moveicon}} {{{moveicon}}} {{/moveicon}}
-    <div class="activity-grid {{^hasname}}noname-grid{{/hasname}} tiles-activity-container" {{#clickable}}data-cmid="{{cmid}}" data-modinstance="{{modinstance}}"
-         {{#pluginfileUrl}}data-url="{{{pluginfileUrl}}}"{{/pluginfileUrl}}
-        {{#secondaryurl}}data-url-secondary="{{{secondaryurl}}}"{{/secondaryurl}} data-title="{{{activityname}}}"
-         data-action="launch-tiles-{{launchtype}}"{{/clickable}}>
+    <div class="activity-grid {{^hasname}}noname-grid{{/hasname}} tiles-activity-container"
+        {{#clickable}}data-cmid="{{cmid}}" data-modinstance="{{modinstance}}" data-title="{{{activityname}}}"{{/clickable}}>
         {{! Icon, Name & Badge }}
         {{#hasname}}
             {{#cmname}}
@@ -77,7 +75,7 @@
         {{! Dates }}
         {{#dates}}
             {{#hasdates}}
-                <div data-region="activity-dates" class="activity-dates mr-sm-2">
+                <div data-region="activity-dates" class="activity-dates me-sm-2">
                     {{#activitydates}}
                         {{$core_course/activity_date}}
                             {{>core_course/activity_date}}
@@ -95,7 +93,7 @@
         {{! Group mode }}
         {{#groupmodeinfo}}
             <div
-                    class="activity-groupmode-info align-self-start ml-sm-2"
+                    class="activity-groupmode-info align-self-start ms-sm-2"
                     data-region="groupmode"
             >
                 {{$ core_courseformat/local/content/cm/groupmode}}
@@ -107,7 +105,7 @@
         {{! Completion }}
         {{#completion}}
             {{#hascompletion}}
-                <div class="activity-completion align-self-start ml-sm-2">
+                <div class="activity-completion align-self-start ms-sm-2">
                     {{$ core_courseformat/local/content/cm/activity_info}}
                         {{> core_courseformat/local/content/cm/activity_info}}
                     {{/ core_courseformat/local/content/cm/activity_info}}
@@ -117,7 +115,7 @@
 
         {{! Action menu }}
         {{#controlmenu}}
-            <div class="activity-actions bulk-hidden align-self-start ml-sm-2">
+            <div class="activity-actions bulk-hidden align-self-start ms-sm-2">
                 {{$ core_courseformat/local/content/cm/controlmenu }}
                     {{> core_courseformat/local/content/cm/controlmenu }}
                 {{/ core_courseformat/local/content/cm/controlmenu }}
@@ -126,7 +124,8 @@
 
         {{! Description }}
         {{#altcontent}}
-            <div class="activity-altcontent d-flex text-break {{#hasname}}activity-description{{/hasname}}">
+            {{! In Moodle 4.5+, if this is a delegated section then this is a container for a <ul> of course modules }}
+            <div class="activity-altcontent {{#issubsection}}delegated-section-content{{/issubsection}}{{^isdelegatedsection}}d-flex{{/isdelegatedsection}} text-break {{#hasname}}activity-description{{/hasname}}">
                 {{{altcontent}}}
             </div>
         {{/altcontent}}

@@ -111,8 +111,10 @@ See [Release notes](https://github.com/moodlebox/moodle-tool_moodlebox/blob/mast
 
 ## Thanks
 
-- To Adrian Perez (@adpe), for implementing restart and shutdown buttons in footer.
-- To Vincent Widmer (@smallhacks), for implementing PiJuice support.
+- To Patrick Lemaire (@patlemaire), for the migration of legacy libphp callbacks to Moodle hooks.
+- To Marcus Green (@marcusgreen), for helping implementing RPi 5 16GB support.
+- To Adrian Perez (@adpe), for the first implementation of restart and shutdown buttons in footer.
+- To Vincent Widmer (@smallhacks), for the implementation of PiJuice support.
 - To Visvanath Ratnaweera (@ratnavis), who kindly donated a Raspberry Pi 3A+ and loaned a Raspberry Pi 4 8GB, enabling support of these Raspberry Pi models.
 
 ## License
@@ -120,6 +122,5 @@ See [Release notes](https://github.com/moodlebox/moodle-tool_moodlebox/blob/mast
 Copyright © 2016 onwards, Nicolas Martignoni <nicolas@martignoni.net>
 
 - All the source code is licensed under GPL 3 or any later version
-- The documentation is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International.
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.

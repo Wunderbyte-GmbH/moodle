@@ -39,7 +39,7 @@ $string['datetimeset'] = 'Set date and time';
 $string['datetimesetmessage'] = 'The clock of the MoodleBox isn\'t on time. It\'s highly recommended to set the date and time to the current time.';
 $string['datetimesetting'] = 'Date and time';
 $string['defaultgateway'] = 'Default gateway';
-$string['dhcpclientinfo'] = 'Client IP and MAC addresses';
+$string['dhcpclientinfo'] = 'Client IP address, name and MAC address';
 $string['dhcpclientnumber'] = 'number of clients';
 $string['dhcpclients'] = 'DHCP clients';
 $string['documentation'] = 'MoodleBox documentation';
@@ -50,11 +50,12 @@ $string['forum'] = 'MoodleBox support forum';
 $string['forum_desc'] = '<p>If you can\'t find an answer to your question in the <a href="https://moodlebox.net/en/help/" title="MoodleBox documentation" target="_blank">MoodleBox documentation</a>, search the <a href="https://discuss.moodlebox.net/" title="MoodleBox forum" target="_blank">MoodleBox support forum</a> to see if your question has already been answered. Otherwise, feel free to open a new discussion.</p>';
 $string['hardwareinfo'] = 'Hardware information';
 $string['hidden'] = 'Hidden';
+$string['hiddendhcpname'] = '--hidden--';
+$string['ihavedonated'] = 'I have donated! 🎉';
+$string['ihavedonated_desc'] = 'Check this box if <a href="https://moodlebox.net/en/donate/" title="Make a donation" target="_blank">you\'ve donated</a> to the MoodleBox project.<br />This setting has no effect at all. It simply allows you to show your pride in having contributed to the <a href="https://moodlebox.net/en/" title="MoodleBox website" target="_blank">MoodleBox project</a>. Many thanks!';
 $string['infofileerror'] = 'Information not available';
 $string['infoheading'] = 'MoodleBox support information';
 $string['information'] = 'Information';
-$string['ihavedonated'] = 'I have donated! 🎉';
-$string['ihavedonated_desc'] = 'Check this box if <a href="https://moodlebox.net/en/donate/" title="Make a donation" target="_blank">you\'ve donated</a> to the MoodleBox project.<br />This setting has no effect at all. It simply allows you to show your pride in having contributed to the <a href="https://moodlebox.net/en/" title="MoodleBox website" target="_blank">MoodleBox project</a>. Many thanks!';
 $string['interfacename'] = 'Interface name';
 $string['kernelversion'] = 'Kernel version';
 $string['missingconfigurationerror'] = 'This section isn\'t available. The plugin installation is not complete, so that the setting cannot be handled by the MoodleBox. Please read the <a href="https://github.com/moodlebox/moodle-tool_moodlebox/blob/master/README.md" target="_blank">installation documentation</a> to fix this error.';
@@ -64,7 +65,7 @@ $string['moodleboxsysteminfo_help'] = 'The MoodleBox information dashboard displ
 
 * Critical MoodleBox operation details, such as remaining disk space on the SD card and processor load, temperature and frequency
 * Current settings of Wi-Fi network supplied by the MoodleBox
-* Number, IP and MAC addresses of all devices connected to the MoodleBox
+* Number, IP address, name and MAC address of all devices connected to the MoodleBox
 * Raspberry Pi model and operating system
 * MoodleBox version and MoodleBox plugin version
 ';
@@ -83,11 +84,11 @@ $string['pluginname'] = 'MoodleBox';
 $string['pluginversion'] = 'MoodleBox plugin version';
 $string['privacy:metadata'] = 'The MoodleBox plugin displays information from the Raspberry Pi and enables some configuration changes, but does not affect or store any personal data itself.';
 $string['projectinfo'] = '<p>The <a href="https://moodlebox.net/en/" title="MoodleBox website" target="_blank">MoodleBox project</a> is a volunteer, non-profit and open source project carried out by <a href="https://blog.martignoni.net/a-propos/" title="Nicolas Martignoni" target="_blank">Nicolas Martignoni</a> in his spare time.</p><p>We thank you for using MoodleBox. You can show your appreciation and support this project by <a href="https://moodlebox.net/en/donate/" title="Make a donation" target="_blank">making a donation</a> ❤. Your donation will help fund the equipment needed to develop the MoodleBox and host its documentation.</p>';
+$string['raspberryhardware'] = 'Raspberry Pi model';
 $string['resizepartition'] = 'Resize SD card partition';
 $string['resizepartition_help'] = 'Use this button to resize the SD card partition.';
 $string['resizepartitionmessage'] = 'The SD card partition has been resized to its maximal size. The MoodleBox is restarting now. It will be online again in a moment.';
 $string['resizepartitionsetting'] = 'SD card partition resizing';
-$string['raspberryhardware'] = 'Raspberry Pi model';
 $string['restart'] = 'Restart MoodleBox';
 $string['restartmessage'] = 'The MoodleBox is restarting. It will be online again in a moment.';
 $string['restartstop'] = 'Restart and shutdown';
@@ -100,12 +101,14 @@ $string['rpi3aplus'] = 'Raspberry Pi 3A+';
 $string['rpi3b'] = 'Raspberry Pi 3B';
 $string['rpi3bplus'] = 'Raspberry Pi 3B+';
 $string['rpi400'] = 'Raspberry Pi 400';
+$string['rpi4eightgb'] = 'Raspberry Pi 4B (8GB RAM)';
+$string['rpi4fourgb'] = 'Raspberry Pi 4B (4GB RAM)';
 $string['rpi4onegb'] = 'Raspberry Pi 4B (1GB RAM)';
 $string['rpi4twogb'] = 'Raspberry Pi 4B (2GB RAM)';
-$string['rpi4fourgb'] = 'Raspberry Pi 4B (4GB RAM)';
-$string['rpi4eightgb'] = 'Raspberry Pi 4B (8GB RAM)';
-$string['rpi5fourgb'] = 'Raspberry Pi 5 (4GB RAM)';
 $string['rpi5eightgb'] = 'Raspberry Pi 5 (8GB RAM)';
+$string['rpi5fourgb'] = 'Raspberry Pi 5 (4GB RAM)';
+$string['rpi5sixteengb'] = 'Raspberry Pi 5 (16GB RAM)';
+$string['rpi5twogb'] = 'Raspberry Pi 5 (2GB RAM)';
 $string['rpiosversion'] = 'Raspberry Pi OS version';
 $string['rpizero2w'] = 'Raspberry Pi Zero 2 W';
 $string['rpizerow'] = 'Raspberry Pi Zero W';
@@ -123,6 +126,7 @@ $string['staticipaddressinvalid'] = 'This IP address is invalid. It must be a va
 $string['systeminfo'] = 'System information';
 $string['undervoltagedetected'] = '<p><b>Warning: under-voltage detected!</b> The power supply of the MoodleBox is inadequate, which can cause various problems, for example a limitation of the number of Wi-Fi clients or even an unexpected shutdown of the device.</p><p>It is strongly recommended to <b>change your power supply</b>, giving preference to the official <a href="https://www.raspberrypi.com/products/micro-usb-power-supply/" target="_blank">Raspberry Pi 12.5W Micro USB Power Supply</a> for Raspberry Pi 3A+, 3B, 3B+ and Zero 2 W, or <a href="https://www.raspberrypi.com/products/type-c-power-supply/" target="_blank">Raspberry Pi 15W USB-C Power Supply</a> for Raspberry Pi 4B, or <a href="https://www.raspberrypi.com/products/27w-power-supply/" target="_blank">Raspberry Pi 27W USB-C Power Supply</a> for Raspberry Pi 5.</p>';
 $string['undervoltageoccurred'] = '<p>An under-voltage situation has occurred since last boot of the MoodleBox. This could indicate the power supply of the MoodleBox is inadequate, which can cause various problems, for example a limitation of the number of Wi-Fi clients or even an unexpected shutdown of the device.</p><p>It is strongly recommended to <b>change your power supply</b>, giving preference to the official <a href="https://www.raspberrypi.com/products/micro-usb-power-supply/" target="_blank">Raspberry Pi 12.5W Micro USB Power Supply</a> for Raspberry Pi 3A+, 3B, 3B+ and Zero 2 W, or <a href="https://www.raspberrypi.com/products/type-c-power-supply/" target="_blank">Raspberry Pi 15W USB-C Power Supply</a> for Raspberry Pi 4B, or <a href="https://www.raspberrypi.com/products/27w-power-supply/" target="_blank">Raspberry Pi 27W USB-C Power Supply</a> for Raspberry Pi 5.</p>';
+$string['unknowndhcpname'] = '--unknown--';
 $string['unknownmodel'] = 'Unknown or unsupported Raspberry Pi model';
 $string['unsupportedhardware'] = 'Unsupported server hardware detected! This plugin does only work on Raspberry Pi';
 $string['uptime'] = 'System uptime';
@@ -147,7 +151,6 @@ $string['wifissidhiddenstate'] = 'Wi-Fi SSID visibility';
 $string['wifissidhiddenstate_help'] = 'If enabled, Wi-Fi SSID will be hidden from users, who won\'t know that there\'s a MoodleBox around. This will notably reduce the usability of the device, but improve slightly its security.';
 $string['wifissidinvalid'] = 'The name of the Wi-Fi network (SSID) provided is invalid. It must be a string of at least 1 byte and at most 32 bytes.';
 
-// Deprecated.
-$string['ipaddress'] = 'IP address';
+// Deprecated since 2023-06-11.
 $string['showbuttonsinfooter'] = 'Show restart and shutdown buttons in footer';
 $string['showbuttonsinfooter_desc'] = 'If enabled, the restart and shutdown buttons are displayed in the footer of all pages of the site when logged in as an administrator or as a manager.';

@@ -39,14 +39,10 @@ $format = course_get_format($course);
 $course = $format->get_course();
 $context = context_course::instance($course->id);
 
+// Variable $displaysection should already be set from course/view.php but we override anyway.
 $displaysection = optional_param('section', 0, PARAM_INT);
-if (!$displaysection) {
-    // Try to get it from url params which may have been added /course/view.php incl from sectionid.
-    // This enables us to respect "permalink" section URLs as AMD format_tiles/course redirects them to &sectionid=xx.
-    $displaysection = $PAGE->url->param('section') ?? null;
-}
 if (!empty($displaysection)) {
-    $format->set_section_number($displaysection);
+    $format->set_sectionnum($displaysection);
 }
 
 if (($marker >= 0) && has_capability('moodle/course:setcurrentsection', $context) && confirm_sesskey()) {
@@ -61,7 +57,4 @@ $outputclass = $format->get_output_classname('content');
 $widget = new $outputclass($format);
 echo $renderer->render($widget);
 
-// Include format.js (required for dragging sections around).
-$PAGE->requires->js('/course/format/tiles/format.js');
-
-// Other JS initialisation has been moved to render_content() in /course/format/tiles/classes/output/renderer.php.
+// JS initialisation has been moved to render_content() in /course/format/tiles/classes/output/renderer.php.

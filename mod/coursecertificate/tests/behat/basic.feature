@@ -138,7 +138,7 @@ Feature: Basic functionality of course certificate module
     And I duplicate "Certificate" activity
     And I wait until "Certificate (copy)" "link" exists
     And I delete "Certificate (copy)" activity
-    Then I should not see "Certificate (copy)"
+    Then I should not see "Certificate (copy)" in the "region-main" "region"
 
   Scenario: Manager can create an instance of course certificate module with non shared templates
     And the following "permission overrides" exist:
@@ -261,7 +261,7 @@ Feature: Basic functionality of course certificate module
       | coursecertificate | Certificate 01 | Certificate intro | C1     | coursecertificate1 | Certificate of participation A |
     When I log in as "admin"
     And I navigate to "Certificates > Manage certificate templates" in site administration
-    And I click on "Actions" "icon" in the "Certificate of participation A" "table_row"
+    And I click on ".dropdown-toggle" "css_element" in the "Certificate of participation A" "table_row"
     And I choose "Delete" in the open action menu
     And I click on "Delete" "button" in the "Confirm" "dialogue"
     And I log out

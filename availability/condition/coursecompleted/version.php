@@ -18,16 +18,16 @@
  * Version info.
  *
  * @package   availability_coursecompleted
- * @copyright 2015 iplusacademy (www.iplusacademy.org)
+ * @copyright iplusacademy (www.iplusacademy.org)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->requires = 2020061500;
 $plugin->component = 'availability_coursecompleted';
+$plugin->requires = 2023100900;
 $plugin->maturity = MATURITY_STABLE;
-$plugin->supported = [311, 403];
-$plugin->release = 'v4.0.1';
-$plugin->version = 2023101400;
+$plugin->supported = [403, 405];
+$plugin->release = 'v4.4.2';
+$plugin->version = 2024100700;

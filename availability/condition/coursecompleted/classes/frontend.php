@@ -18,7 +18,7 @@
  * Front-end class.
  *
  * @package   availability_coursecompleted
- * @copyright 2015 iplusacademy (www.iplusacademy.org)
+ * @copyright iplusacademy (www.iplusacademy.org)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -34,23 +34,21 @@ use stdClass;
  * Front-end class.
  *
  * @package   availability_coursecompleted
- * @copyright 2015 iplusacademy (www.iplusacademy.org)
+ * @copyright iplusacademy (www.iplusacademy.org)
  * @author    Renaat Debleu <info@eWallah.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class frontend extends \core_availability\frontend {
-
-
     /**
      * Decides whether this plugin should be available in a given course. The
      * plugin can do this depending on course or system settings.
      *
      * @param stdClass $course Course object
-     * @param cm_info $cm Course-module currently being edited (null if none)
-     * @param section_info $section Section currently being edited (null if Course object)
+     * @param cm_info|null $cm Course-module currently being edited (null if none)
+     * @param section_info|null $section Section currently being edited (null if Course object)
      * @return bool True if there are completion criteria
      */
-    protected function allow_add($course, cm_info $cm = null, section_info $section = null) {
+    protected function allow_add($course, ?cm_info $cm = null, ?section_info $section = null) {
         $return = false;
         if ($course->enablecompletion == 1) {
             $completioninfo = new \completion_info($course);

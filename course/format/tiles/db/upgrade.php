@@ -159,13 +159,6 @@ function xmldb_format_tiles_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2019052100, 'format', 'tiles');
     }
 
-    if ($oldversion < 2020080629) {
-        if (strpos(get_config('format_tiles', 'documentationurl'), 'evolutioncode.uk') !== false) {
-            set_config('documentationurl', 'https://evolutioncode.uk/tiles/docs/', 'format_tiles');
-        }
-        upgrade_plugin_savepoint(true, 2020080629, 'format', 'tiles');
-    }
-
     if ($oldversion < 2024020200) {
 
         // New way of storing tile images, using a new format_tiles_tile_options table instead of core course_format_options.
@@ -215,6 +208,15 @@ function xmldb_format_tiles_upgrade($oldversion) {
         // Site admin can de-activate if they wish via plugin settings.
         set_config('usecourseindex', 1, 'format_tiles');
         upgrade_plugin_savepoint(true, 2024061800, 'format', 'tiles');
+    }
+
+    // Remove any adhoc tasks queued for deleted code (commit 7f0c8db6).
+    if ($oldversion < 2025041631) {
+        $deletedclasses = ['\format_tiles\task\deferred_register', '\format_tiles\task\delete_empty_sections'];
+        foreach ($deletedclasses as $deletedclass) {
+            $DB->delete_records('task_adhoc', ['component' => 'format_tiles', 'classname' => $deletedclass]);
+        }
+        upgrade_plugin_savepoint(true, 2025041631, 'format', 'tiles');
     }
 
     return true;

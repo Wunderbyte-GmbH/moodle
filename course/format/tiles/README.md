@@ -15,15 +15,33 @@ Once installed:
 
 - an Administrator will be able to see the plugins settings under Site Administration > Plugins > Course Formats > Tiles
 
+## Branches
+
+At the time of writing (July 2025) the following branches were being maintained:
+
+| Moodle version | Tiles branch    |
+|----------------|-----------------|
+| 4.5 LTS        | moodle45        |
+| 5.0            | master/moodle50 |
+
+The following branches are in the repo but are no longer receiving updates:
+
+| Moodle version  | Tiles branch    |
+|-----------------|-----------------|
+| 4.0             | moodle41b*      |
+| 4.1 LTS         | moodle41b*      |
+| 4.2             | moodle42b       |
+| 4.3             | moodle43        |
+| 4.4             | moodle44        |
+
+(*The moodle41 branch was used for both Moodle 4.0 and 4.1)
+
 ## Compatibility and Support
-This version of the plugin is compatible with Moodle 4.3.  Other versions are available for prior versions of Moodle.
+This version of the plugin is compatible with the Moodle version specified in the plugin's version.php file (under $plugin->supported).  Other versions are available for prior versions of Moodle.
 
 It supports the Privacy API.
 
 It is intended to support the current versions of the most popular browsers such as Chrome, Firefox, desktop Safari and mobile iOS and Android.
-
-## Documentation
-Detailed information about the operation of the plugin is available at http://evolutioncode.uk/tiles
 
 ## Licence
 This plugin is part of Moodle - http://moodle.org/

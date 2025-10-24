@@ -18,7 +18,7 @@
  * Step definitions related to mark user complete.
  *
  * @package    availability_coursecompleted
- * @copyright  2021 iplusacademy (www.iplusacademy.org)
+ * @copyright  iplusacademy (www.iplusacademy.org)
  * @author     Renaat Debleu <info@eWallah.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -30,18 +30,17 @@
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 // @codeCoverageIgnoreEnd
 
-use Behat\Mink\Exception\ElementNotFoundException as ElementNotFoundException;
+use Behat\Mink\Exception\ElementNotFoundException;
 
 /**
  * Step definitions related to mark user complete.
  *
  * @package    availability_coursecompleted
- * @copyright  2021 iplusacademy (www.iplusacademy.org)
+ * @copyright  iplusacademy (www.iplusacademy.org)
  * @author     Renaat Debleu <info@eWallah.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_availability_coursecompleted extends behat_base {
-
     /**
      * Complete user in a course
      * @Then /^I mark course "(?P<course>[^"]*)" completed for user "(?P<user>[^"]*)"$/

@@ -24,8 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->dirroot . '/course/format/tiles/lib.php');
-
 if ($ADMIN->fulltree) {
     $settings = null; // We add our own settings pages and do not want the standard settings link.
 
@@ -37,14 +35,20 @@ if ($ADMIN->fulltree) {
     $page = new admin_settingpage('format_tiles/tab-colours', get_string('colours', 'format_tiles'));
 
     $page->add(
-        new admin_setting_heading('followthemecolour', get_string('followthemecolour', 'format_tiles'),
-            get_string('followthemecolour_desc', 'format_tiles'))
+        new admin_setting_heading('other', get_string('other', 'format_tiles'), '')
     );
 
     $name = 'format_tiles/followthemecolour';
     $title = get_string('followthemecolour', 'format_tiles');
     $default = 0;
-    $page->add(new admin_setting_configcheckbox($name, $title, '', $default));
+    $description = get_string('followthemecolour_desc', 'format_tiles');
+    $page->add(new admin_setting_configcheckbox($name, $title, $description, $default));
+
+    $name = 'format_tiles/subtileiconcolourbackground';
+    $title = get_string('subtileiconcolourbackground', 'format_tiles');
+    $description = get_string('subtileiconcolourbackground_desc', 'format_tiles');
+    $default = 0;
+    $page->add(new admin_setting_configcheckbox($name, $title, $description, $default));
 
     $brandcolourdefaults = [
         '#1670CC' => get_string('colourblue', 'format_tiles'),
@@ -99,6 +103,9 @@ if ($ADMIN->fulltree) {
 
     // Modal activities / resources.
     $page = new admin_settingpage('format_tiles/tab-modalwindows', get_string('modalwindows', 'format_tiles'));
+    $cachecallback = function() {
+        \cache_helper::purge_by_event('format_tiles/modaladminsettingchanged');
+    };
 
     // Modal windows for course modules.
     $allowedmodtypes = ['page' => 1]; // Number is default to on or off.
@@ -119,6 +126,7 @@ if ($ADMIN->fulltree) {
         $allowedmodtypes,
         $options
     );
+    $setting->set_updatedcallback($cachecallback);
     $page->add($setting);
 
     // Modal windows for resources.
@@ -143,6 +151,7 @@ if ($ADMIN->fulltree) {
         $allowedresourcetypes
     );
     $page->add($setting);
+    $setting->set_updatedcallback($cachecallback);
     $settingscategory->add($page);
 
     // Photo tile settings.
@@ -221,7 +230,7 @@ if ($ADMIN->fulltree) {
     $settingscategory->add($page);
 
     // Javascript navigation settings.
-    $page = new admin_settingpage('format_tiles/tab-jsnav', get_string('jsnavsettings', 'format_tiles'));
+    $page = new admin_settingpage('format_tiles/tab-jsnav', get_string('jsactivate', 'format_tiles'));
 
     $name = 'format_tiles/usejavascriptnav';
     $title = get_string('usejavascriptnav', 'format_tiles');
@@ -282,27 +291,23 @@ if ($ADMIN->fulltree) {
     $default = 1;
     $page->add(new admin_setting_configcheckbox($name, $title, $description, $default));
 
+    $name = 'format_tiles/progressincludesubsections';
+    $title = get_string('progressincludesubsections', 'format_tiles');
+    $description = get_string('progressincludesubsections_desc', 'format_tiles');
+    $default = 0; // Core does not include it, so for now we do not do so by default.
+    $page->add(new admin_setting_configcheckbox($name, $title, $description, $default));
+
     $name = 'format_tiles/showseczerocoursewide';
     $title = get_string('showseczerocoursewide', 'format_tiles');
     $description = get_string('showseczerocoursewide_desc', 'format_tiles');
     $default = 0;
     $page->add(new admin_setting_configcheckbox($name, $title, $description, $default));
 
-    $name = 'format_tiles/usetooltips';
-    $title = get_string('usetooltips', 'format_tiles');
-    $description = get_string('usetooltips_desc', 'format_tiles');
-    $default = 0;
+    $name = 'format_tiles/seczerocollapsible';
+    $title = get_string('seczerocollapsible', 'format_tiles');
+    $description = get_string('seczerocollapsible_desc', 'format_tiles');
+    $default = 1;
     $page->add(new admin_setting_configcheckbox($name, $title, $description, $default));
-
-    $setting = new admin_setting_configtext(
-        'format_tiles/documentationurl',
-        get_string('documentationurl', 'format_tiles'),
-        get_string('documentationurl_descr', 'format_tiles'),
-        'https://evolutioncode.uk/tiles/docs',
-        PARAM_RAW,
-        50
-    );
-    $page->add($setting);
 
     // Custom css.
     $name = 'format_tiles/customcss';
@@ -329,6 +334,14 @@ if ($ADMIN->fulltree) {
     $description = get_string('usecourseindex_desc', 'format_tiles');
     $default = 1;
     $page->add(new admin_setting_configcheckbox($name, $title, $description, $default));
+
+    $page->add(new admin_setting_heading(
+        'experimentalfeatures', get_string('experimentalfeatures', 'format_tiles'), ''
+    ));
+    $name = 'format_tiles/highcontrastmodeallow';
+    $title = get_string('highcontrastmodeallow', 'format_tiles');
+    $default = 0;
+    $page->add(new admin_setting_configcheckbox($name, $title, get_string('highcontrastmodeallow_desc', 'format_tiles'), $default));
 
     $settingscategory->add($page);
 

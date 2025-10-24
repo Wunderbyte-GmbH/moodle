@@ -40,7 +40,6 @@ class tool_forcedcache_cache_factory extends cache_factory {
 
         // Check if this is a PHPUnit test and redirect to the phpunit config classes if it is.
         if ($testing) {
-            require_once($CFG->dirroot.'/cache/locallib.php');
             require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
             // We have just a single class for PHP unit tests. We don't care enough about its
             // performance to do otherwise and having a single method allows us to inject things into it
@@ -49,7 +48,6 @@ class tool_forcedcache_cache_factory extends cache_factory {
         }
 
         if ($writer) {
-            require_once($CFG->dirroot.'/cache/locallib.php');
             if (!$testing) {
                 $class .= '_writer';
             }
@@ -57,6 +55,10 @@ class tool_forcedcache_cache_factory extends cache_factory {
 
         if (!array_key_exists($class, $this->configs)) {
             // Create a new instance and call it to load it.
+            // As part of generating store instance config we test the initialisation of stores.
+            // Testing this may initialise DI, which will attempt to use cache for hookcallbacks.
+            // Setting the state to initialising will make it use ad-hoc cache for that request.
+            self::set_state(self::STATE_INITIALISING);
             $this->configs[$class] = new $class;
             $this->configs[$class]->load();
         }
@@ -68,7 +70,10 @@ class tool_forcedcache_cache_factory extends cache_factory {
         if (empty($CFG->siteidentifier)) {
             $this->set_state(self::STATE_STORES_DISABLED);
         } else {
-            $this->set_state(self::STATE_READY);
+            // We cannot directly set the state to enabled from disabled.
+            // So we instead start and finish an update to set STATE_READY.
+            $this->updating_started();
+            $this->updating_finished();
         }
 
         // Return the instance.

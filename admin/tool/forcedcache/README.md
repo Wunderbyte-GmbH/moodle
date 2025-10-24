@@ -1,6 +1,6 @@
-# moodle-tool_forcedcache
+[![ci](https://github.com/catalyst/moodle-tool_forcedcache/actions/workflows/ci.yml/badge.svg?branch=MOODLE_405_STABLE)](https://github.com/catalyst/moodle-tool_forcedcache/actions/workflows/ci.yml?branch=MOODLE_405_STABLE)
 
-![GitHub Workflow Status (branch)](https://img.shields.io/github/actions/workflow/status/catalyst/moodle-tool_forcedcache/ci.yml?label=ci&branch=MOODLE_40_STABLE)
+# moodle-tool_forcedcache
 
 * [What is this?](#what-is-this)
 * [Branches](#branches)
@@ -15,27 +15,26 @@ This is a moodle plugin that will override Moodle's default options for caching 
 This allows for deterministic configuration, based on a lightweight configuration and rules stored in code.
 This has the advantage of making caching code-configurable before deployment, and allows for more control of the cache configurations throughout your fleet.
 
-## Branches
+## Moodle supported branches
 
-| Moodle version    | Branch           | PHP  |
+| Version    | Branch           | PHP  |
 |-------------------|------------------|------|
-| Moodle 4.0+       | MOODLE_40_STABLE | 7.3+ |
-| Moodle 3.5 - 3.11 | master           | 7.1+ |
+| Moodle 4.5+       | MOODLE_405_STABLE | 7.3+ |
+| Moodle 4.0-4.4    | MOODLE_40_STABLE  | 7.3+ |
+
+## Totara supported branches
+| Version    | Branch           | PHP  |
+|-------------------|------------------|------|
+| Totara 19+ | TOTARA_19 | 8.1+ |
+| Totara 18  | MOODLE_40_STABLE  | 7.3+ |
 
 
 ## Installation
 
-#### Requirements:
-- If you are on Moodle < 3.9, you must have the changes in [MDL-41492](https://tracker.moodle.org/browse/MDL-41492), applied in your project as this plugin uses those interface points created.
-
-#### Recommendations:
-- We recommended to have [MDL-70233](https://tracker.moodle.org/browse/MDL-70233), installed to prevent default cache creation during CACHING_DISABLED conditions such as system upgrade.
-
 1. [Clone the plugin](#step-1-clone-the-plugin)
-2. [Apply core patches (if required)](#step-2-apply-core-patches-if-required)
-3. [Wire up the configuration](#step-3-wire-up-the-configuration-if-required)
-4. [Update cache configurations as needed](#step-4-configure-the-cache-settings)
-5. [Apply the new cache rules](#step-5-apply-the-cache-rules)
+2. [Wire up the configuration](#step-3-wire-up-the-configuration-if-required)
+3. [Update cache configurations as needed](#step-4-configure-the-cache-settings)
+4. [Apply the new cache rules](#step-5-apply-the-cache-rules)
 
 Step 1: Clone the plugin
 ------------------------
@@ -50,14 +49,7 @@ Then run the Moodle install or upgrade as normal.
 
 https://docs.moodle.org/en/Installing_plugins
 
-
-Step 2: Apply core patches (if required)
-----------------------------------------
-
-This plugin relies on [MDL-41492](https://tracker.moodle.org/browse/MDL-41492), so this patch must be applied to any Moodle prior
-to 3.9. Patches have been bundled with this plugin, to allow for quick application of the patch for various supported Moodle versions.
-
-Step 3: Wire up the configuration
+Step 2: Wire up the configuration
 -----------------------------------------------
 All configuration in this plugin is declared in code. You could do one of the following:
 - Set your configuration directly in a PHP `array` in config.php (Recommended)

@@ -64,11 +64,12 @@ class utils {
      * | A | 00-03 | PCB Revision  | The PCB revision number                            |
      * | B | 04-11 | Model name    | A, B, A+, B+, 2B, Alpha, CM1, unknown, 3B, Zero,   |
      * |   |       |               | CM3, unknown, Zero W, 3B+, 3A+, internal, CM3+,    |
-     * |   |       |               | 4B, Zero 2 W, 400, CM4, CM4S, internal, 5          |
+     * |   |       |               | 4B, Zero 2 W, 400, CM4, CM4S, internal, 5, CM5,    |
+     * |   |       |               | 500, CM5 Lite,                                     |
      * | C | 12-15 | Processor     | BCM2835, BCM2836, BCM2837, BCM2711, BCM2712        |
      * | D | 16-19 | Manufacturer  | Sony UK, Egoman, Embest, Sony Japan,               |
      * |   |       |               | Embest, Stadium                                    |
-     * | E | 20-22 | Memory size   | 256MB, 512MB, 1GB, 2GB, 4GB, 8GB                   |
+     * | E | 20-22 | Memory size   | 256MB, 512MB, 1GB, 2GB, 4GB, 8GB, 16GB             |
      * | F | 23-23 | Revision flag | If set, new-style revision                         |
      * | G | 24-24 | Unused        |                                                    |
      * | H | 25-25 | Warranty bit  | If set, warranty void by overclocking (post Pi2)   |
@@ -93,10 +94,11 @@ class utils {
         $revisionnumber = hexdec($revisioncode);
 
         // Define arrays of various hardware parameter values.
-        $memorysizes = ['256MB', '512MB', '1GB', '2GB', '4GB', '8GB'];
+        $memorysizes = ['256MB', '512MB', '1GB', '2GB', '4GB', '8GB', '16GB' ];
         $models = ['A', 'B', 'A+', 'B+', '2B', 'Alpha', 'CM1', 'Unknown',
                 '3B', 'Zero', 'CM3', 'Unknown', 'ZeroW', '3B+', '3A+', 'Internal use',
-                'CM3+', '4B', 'Zero2W', '400', 'CM4', 'CM4S', 'Internal use', '5', ];
+                'CM3+', '4B', 'Zero2W', '400', 'CM4', 'CM4S', 'Internal use', '5',
+                'CM5', '500', 'CM5 Lite', ];
         $processors = ['BCM2835', 'BCM2836', 'BCM2837', 'BCM2711', 'BCM2712'];
         $manufacturers = ['Sony UK', 'Egoman', 'Embest', 'Sony Japan',
                 'Embest', 'Stadium', ];
@@ -185,8 +187,11 @@ class utils {
             $iter = new \RecursiveIteratorIterator($iter, \RecursiveIteratorIterator::CHILD_FIRST);
             $iter = new \RegexIterator($iter, '|^.*/device$|i', \RecursiveRegexIterator::GET_MATCH);
             $iter->setMaxDepth(2);
-            $matches = array_values(preg_grep('#^.*/(eth|en).*$#i', array_keys(iterator_to_array($iter))))[0];
-            return explode('/', $matches)[4];
+            if ( $matches = array_values(preg_grep('#^.*/(eth|en).*$#i', array_keys(iterator_to_array($iter)))) ) {
+                return explode('/', $matches[0])[4];
+            } else {
+                return false;
+            }
         } else {
             return false;
         }
@@ -340,12 +345,13 @@ class utils {
      * Get IP addresses of wireless connected clients.
      *
      * @param string $interface the network interface to check.
+     * @param string $leasesfile the file containing the dnsmasq leases.
      * @return associative array of MAC address, IP address or empty array
      * if no clients connected.
      */
-    public static function get_connected_ip_adresses($interface) {
+    public static function get_connected_ip_adresses($interface, $leasesfile) {
         $iwoutput = shell_exec('iw dev ' . $interface . ' station dump') ?: '';
-        $arpoutput = shell_exec('arp -ai ' . $interface) ?: '';
+        $arpoutput = shell_exec('arp -ani ' . $interface) ?: '';
 
         // Extract MAC and IP addresses.
         preg_match_all('/Station\s+([a-fA-F0-9:]+)/', $iwoutput, $iwmatches);
@@ -356,14 +362,38 @@ class utils {
         sort($iwmacadresses);
         $arpmacippairs = array_combine($arpmatches[2], $arpmatches[1]);
 
-        // Compare the sorted MAC addresses and populate array of pairs.
-        $connectedmacippairs = [];
+        // Get leases from `dnsmasq` lease file.
+        if ( file_exists($leasesfile) ) {
+            if ( filesize($leasesfile) > 0 ) {
+                $leases = explode("\n", trim(file_get_contents($leasesfile)));
+            } else {
+                $leases = [];
+            }
+        } else {
+            $leases = [];
+        }
+
+        // Compare the sorted MAC addresses and populate array of connection data.
+        $connecteddata = [];
         foreach ($iwmacadresses as $macaddress) {
             if (isset($arpmacippairs[$macaddress])) {
-                $connectedmacippairs[$macaddress] = $arpmacippairs[$macaddress];
+                // Find MAC and IP addresses in lease file, and get matching device name.
+                if ($m = preg_grep('/^.*' . $macaddress . '\s' . $arpmacippairs[$macaddress] . '.*$/i', $leases)) {
+                    $name = explode(' ', reset($m))[3];
+                    if ( $name == '*') {
+                        $name = get_string('hiddendhcpname', 'tool_moodlebox');
+                    }
+                } else {
+                    $name = get_string('unknowndhcpname', 'tool_moodlebox');
+                }
+                $connecteddata[$macaddress] = [
+                    'ip' => $arpmacippairs[$macaddress],
+                    'name' => $name,
+                ];
             }
         }
-        return $connectedmacippairs;
+
+        return $connecteddata;
     }
 
     /**
