@@ -70,11 +70,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
         $sitefont = isset($theme->settings->fontsite) ? $theme->settings->fontsite : 'Moodle';
 
         if ($sitefont != 'Moodle') {
-            $output .= '<link rel="preconnect" href="https://fonts.googleapis.com">
-                       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                       <link href="https://fonts.googleapis.com/css2?family='
-                . $sitefont .
-                ':ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">';
+            $output .= '';
         }
 
         return $output;
