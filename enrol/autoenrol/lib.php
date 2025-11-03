@@ -795,11 +795,11 @@ class enrol_autoenrol_plugin extends enrol_plugin {
         $fields['expirynotify']    = $expirynotify;
         $fields['notifyall']       = $notifyall;
         $fields['expirythreshold'] = $this->get_config('expirythreshold');
-        $fields['customint1']      = 0;
+        $fields['customint1']      = 1;
         $fields['customint3']      = $this->get_config('longtimenosee');
         $fields['customint4']      = $this->get_config('newenrols');
         $fields['customint5']      = $this->get_config('maxenrolled');
-        $fields['customint6']      = $this->get_config('selfunenrol');
+        $fields['customint6']      = 0;
         $fields['customint7']      = $this->get_config('sendcoursewelcomemessage');
         $fields['customint8']      = 0;
 
