@@ -109,6 +109,14 @@ class handler extends handler_base {
         // indicates a new attempt creation. This way, simpler H5P activies like multichoice can generate
         // an attempt each time the user answers while complex like question-set could group all questions
         // in a single attempt (using subcontents).
+        $statementcontext = $statement->get_context();
+        $data = $statementcontext->get_data();
+        if (isset($data->contextActivities)) {
+            $cat = reset($data->contextActivities->category);
+            if (str_contains($cat->id, 'InteractiveBook')) {
+                $subcontent = 1;
+            }
+        }
         if (empty($subcontent)) {
             $attempt = attempt::new_attempt($user, $cm);
         } else {
