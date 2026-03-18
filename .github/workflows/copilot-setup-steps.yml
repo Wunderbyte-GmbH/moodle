@@ -1,0 +1,100 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # This job name is required by GitHub Copilot
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    permissions:
+      # Keep permissions minimal; add more only if absolutely required by your steps
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      # ------------------------------------------------------------------ #
+      # PHP 8.1 — matches the minimum supported version for Moodle 4.5     #
+      # ------------------------------------------------------------------ #
+      - name: Install PHP 8.1 and required extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: >-
+            curl, gd, intl, mbstring, mysqli, opcache,
+            soap, xml, xmlrpc, zip
+          ini-values: max_input_vars=5000, memory_limit=512M
+          # cs2pr converts PHPCS checkstyle output to GitHub annotations
+          tools: composer:v2, cs2pr
+          coverage: none
+
+      # ------------------------------------------------------------------ #
+      # Moodle Coding Standard (PHPCS + moodle/moodle-cs ruleset)          #
+      # Installed globally so `phpcs` and `phpcbf` are always on PATH      #
+      # ------------------------------------------------------------------ #
+      - name: Install Moodle coding standard globally
+        run: |
+          composer global require --no-interaction --no-progress \
+            moodle/moodle-cs \
+            squizlabs/php_codesniffer
+          # Make globally-installed binaries available everywhere
+          echo "$(composer global config bin-dir --absolute 2>/dev/null)" >> "$GITHUB_PATH"
+
+      - name: Verify PHPCS + Moodle standard
+        run: |
+          phpcs --version
+          phpcs --standard=Moodle --version 2>/dev/null || true
+
+      # ------------------------------------------------------------------ #
+      # Composer — install project dependencies (PHPUnit, Behat drivers)   #
+      # ------------------------------------------------------------------ #
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-php81-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-php81-
+
+      - name: Install project Composer dependencies
+        run: |
+          composer install \
+            --no-interaction \
+            --no-progress \
+            --prefer-dist \
+            --optimize-autoloader
+
+      # ------------------------------------------------------------------ #
+      # Node.js — Moodle requires >=22.11.0 <23 (lts/jod via .nvmrc)      #
+      # Used by Grunt for compiling AMD JS modules and SCSS                 #
+      # ------------------------------------------------------------------ #
+      - name: Set up Node.js (reads version from .nvmrc)
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+
+      - name: Install npm dependencies (Grunt toolchain)
+        run: npm ci
+
+      # ------------------------------------------------------------------ #
+      # Smoke-check: confirm key binaries are on PATH                       #
+      # ------------------------------------------------------------------ #
+      - name: Verify toolchain
+        run: |
+          php --version
+          phpcs --version
+          phpcbf --version
+          vendor/bin/phpunit --version
+          node --version
+          npx grunt --version
+
