@@ -92,3 +92,6 @@
 	path = theme/boost_union
 	url = git@github.com:Wunderbyte-GmbH/moodle-theme_boost_union.git
 	branch = MOODLE_405_STABLE
+[submodule "local/linkeduser"]
+	path = local/linkeduser
+	url = git@github.com:Wunderbyte-GmbH/moodle-local_linkeduser.git

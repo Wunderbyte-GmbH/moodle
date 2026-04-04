@@ -14,17 +14,45 @@ jobs:
   copilot-setup-steps:
     runs-on: ubuntu-latest
     permissions:
-      # Keep permissions minimal; add more only if absolutely required by your steps
       contents: read
 
     steps:
-      - name: Checkout repository
+      # ------------------------------------------------------------------ #
+      # 1. Checkout the plugin (mod/datalynx) — stays at GITHUB_WORKSPACE  #
+      # ------------------------------------------------------------------ #
+      - name: Checkout plugin repository
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
       # ------------------------------------------------------------------ #
-      # PHP 8.1 — matches the minimum supported version for Moodle 4.5     #
+      # 2. Clone Moodle 4.5 core into ~/moodle                             #
+      #    A shallow clone keeps it fast; full history is not needed here.  #
+      # ------------------------------------------------------------------ #
+      - name: Clone Moodle 4.5 (MOODLE_405_STABLE)
+        run: |
+          git clone \
+            --branch MOODLE_405_STABLE \
+            --depth 1 \
+            https://github.com/moodle/moodle.git \
+            "$HOME/moodle"
+          echo "MOODLE_ROOT=$HOME/moodle" >> "$GITHUB_ENV"
+          # Capture the exact commit SHA for a precise, valid cache key
+          MOODLE_SHA=$(git -C "$HOME/moodle" rev-parse HEAD)
+          echo "MOODLE_SHA=${MOODLE_SHA}" >> "$GITHUB_ENV"
+
+      # ------------------------------------------------------------------ #
+      # 3. Place the plugin inside the Moodle tree via a symlink            #
+      #    $GITHUB_WORKSPACE still contains the editable plugin files;      #
+      #    Moodle resolves them through mod/datalynx.                       #
+      # ------------------------------------------------------------------ #
+      - name: Symlink plugin into Moodle mod/ directory
+        run: |
+          ln -s "$GITHUB_WORKSPACE" "$HOME/moodle/mod/datalynx"
+          echo "Plugin linked: $HOME/moodle/mod/datalynx -> $GITHUB_WORKSPACE"
+
+      # ------------------------------------------------------------------ #
+      # 4. PHP 8.1 — minimum supported version for Moodle 4.5              #
       # ------------------------------------------------------------------ #
       - name: Install PHP 8.1 and required extensions
         uses: shivammathur/setup-php@v2
@@ -32,22 +60,20 @@ jobs:
           php-version: '8.1'
           extensions: >-
             curl, gd, intl, mbstring, mysqli, opcache,
-            soap, xml, xmlrpc, zip
+            soap, xml, xmlrpc, zip, sodium
           ini-values: max_input_vars=5000, memory_limit=512M
-          # cs2pr converts PHPCS checkstyle output to GitHub annotations
           tools: composer:v2, cs2pr
           coverage: none
 
       # ------------------------------------------------------------------ #
-      # Moodle Coding Standard (PHPCS + moodle/moodle-cs ruleset)          #
-      # Installed globally so `phpcs` and `phpcbf` are always on PATH      #
+      # 5. Moodle Coding Standard (PHPCS + moodle/moodle-cs ruleset)       #
+      #    Installed globally so phpcs / phpcbf are on PATH everywhere.    #
       # ------------------------------------------------------------------ #
       - name: Install Moodle coding standard globally
         run: |
           composer global require --no-interaction --no-progress \
             moodle/moodle-cs \
             squizlabs/php_codesniffer
-          # Make globally-installed binaries available everywhere
           echo "$(composer global config bin-dir --absolute 2>/dev/null)" >> "$GITHUB_PATH"
 
       - name: Verify PHPCS + Moodle standard
@@ -56,16 +82,18 @@ jobs:
           phpcs --standard=Moodle --version 2>/dev/null || true
 
       # ------------------------------------------------------------------ #
-      # Composer — install project dependencies (PHPUnit, Behat drivers)   #
+      # 6. Composer — install Moodle's own dependencies (PHPUnit etc.)     #
+      #    Must run from MOODLE_ROOT, not from the plugin directory.        #
       # ------------------------------------------------------------------ #
       - name: Cache Composer packages
         uses: actions/cache@v4
         with:
           path: ~/.cache/composer/files
-          key: composer-php81-${{ hashFiles('composer.lock') }}
-          restore-keys: composer-php81-
+          key: composer-moodle405-php81-${{ env.MOODLE_SHA }}
+          restore-keys: composer-moodle405-php81-
 
-      - name: Install project Composer dependencies
+      - name: Install Moodle Composer dependencies
+        working-directory: ${{ env.MOODLE_ROOT }}
         run: |
           composer install \
             --no-interaction \
@@ -74,27 +102,57 @@ jobs:
             --optimize-autoloader
 
       # ------------------------------------------------------------------ #
-      # Node.js — Moodle requires >=22.11.0 <23 (lts/jod via .nvmrc)      #
-      # Used by Grunt for compiling AMD JS modules and SCSS                 #
+      # 7. Node.js — Moodle requires >=22.11.0 <23 (lts/jod via .nvmrc)   #
+      #    Grunt compiles AMD JS modules and SCSS.                          #
       # ------------------------------------------------------------------ #
-      - name: Set up Node.js (reads version from .nvmrc)
+      - name: Set up Node.js (from Moodle .nvmrc)
         uses: actions/setup-node@v4
         with:
-          node-version-file: '.nvmrc'
+          node-version-file: '${{ env.MOODLE_ROOT }}/.nvmrc'
           cache: 'npm'
+          cache-dependency-path: '${{ env.MOODLE_ROOT }}/package-lock.json'
 
       - name: Install npm dependencies (Grunt toolchain)
+        working-directory: ${{ env.MOODLE_ROOT }}
         run: npm ci
 
       # ------------------------------------------------------------------ #
-      # Smoke-check: confirm key binaries are on PATH                       #
+      # 8. Initialise PHPUnit inside the Moodle tree                       #
+      # ------------------------------------------------------------------ #
+      - name: Create Moodle dataroot and minimal config
+        run: |
+          mkdir -p "$HOME/moodledata"
+          cat > "$HOME/moodle/config.php" <<'PHP'
+          <?php
+          unset($CFG);
+          global $CFG;
+          $CFG = new stdClass();
+          $CFG->dbtype    = 'mysqli';
+          $CFG->dblibrary = 'native';
+          $CFG->dbhost    = '127.0.0.1';
+          $CFG->dbname    = 'moodle_test';
+          $CFG->dbuser    = 'root';
+          $CFG->dbpass    = '';
+          $CFG->prefix    = 'm_';
+          $CFG->wwwroot   = 'http://localhost';
+          $CFG->dataroot  = getenv('HOME') . '/moodledata';
+          $CFG->admin     = 'admin';
+          $CFG->directorypermissions = 0777;
+          $CFG->phpunit_dataroot  = getenv('HOME') . '/phpunitdata';
+          $CFG->phpunit_prefix    = 't_';
+          require_once(__DIR__ . '/lib/setup.php');
+          PHP
+
+      # ------------------------------------------------------------------ #
+      # 9. Smoke-check: confirm every key binary is on PATH                #
       # ------------------------------------------------------------------ #
       - name: Verify toolchain
         run: |
           php --version
           phpcs --version
           phpcbf --version
-          vendor/bin/phpunit --version
+          "$HOME/moodle/vendor/bin/phpunit" --version
           node --version
           npx grunt --version
-
+          echo "MOODLE_ROOT=$MOODLE_ROOT"
+          ls "$MOODLE_ROOT/mod/datalynx/version.php"

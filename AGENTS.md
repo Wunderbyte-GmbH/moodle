@@ -21,11 +21,12 @@ Moodle 4.5 LMS on branch `MOODLE_405_DEVDAVID`, PHP core with JS AMD modules. Pl
 * **Build System**: Use `npx grunt` for compiling JS/SCSS and generating `amd/build/`.
 * **Testing (Strict Requirement)**:
 * **PHPUnit**: Extend `advanced_testcase`. Use data generators (`$this->getDataGenerator()->create_module('datalynx')`).
-* **Behat**: Use Moodle-standard selectors. Address `MoveTargetOutOfBoundsException` by using `"link" "region"` selectors and ensuring notifications are dismissed.
-- **Git**: `git checkout MOODLE_405_DEVDAVID`; `git submodule update --init --recursive`; commit submodule changes with `git add mod/booking`.
+* **Behat**: Use Moodle-standard selectors. Address `MoveTargetOutOfBoundsException` by using `"link" "region"` selectors and ensuring notifications are dismissed. Always use headless and stop on failure. Example usage: vendor/bin/behat --profile=headlessgeckodriver --config /var/moodledata-b/behatrun/behat/behat.yml --tags=@mod_datalynx --stop-on-failure .
+
+- **Git**: Use git only in the submodules.
 - **Testing**: PHPUnit: `php admin/tool/phpunit/cli/init.php` (once), `vendor/bin/phpunit --testsuite mod_booking_testsuite`. Behat: `php admin/tool/behat/cli/init.php`, `vendor/bin/behat --config /var/moodledata-b/behatrun/behat/behat.yml`.
 - **Build**: `npm install`; `npx grunt` (or `npx grunt watch`); `npx grunt --root=mod/booking` for plugins.
-- **Lint**: `vendor/bin/phpcs --standard=phpcs.xml file.php`; `npx grunt eslint`.
+- **Lint**: `vendor/bin/phpcs --standard=Moodle file.php`; `npx grunt eslint`.
 - **Upgrade**: After `db/` changes, `php admin/cli/upgrade.php`.
 
 * **XMLDB**: Use the XMLDB editor for `db/install.xml`. Never edit XML directly.
